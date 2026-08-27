@@ -1,0 +1,5808 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="Gopal Chavan Guniting Work - GCGW. Specialists in Guniting, Structural Repairs, Concrete Rehabilitation and Civil Engineering Solutions.">
+
+    <title>GCGW — Gopal Chavan Guniting Work</title>
+
+
+    <!-- =====================================================
+         GOOGLE FONTS
+    ====================================================== -->
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap"
+          rel="stylesheet">
+
+
+    <!-- =====================================================
+         GSAP
+    ====================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+
+
+    <!-- =====================================================
+         CSS
+    ====================================================== -->
+
+    <style>
+
+        /* =================================================
+           ROOT
+        ================================================= */
+
+        :root {
+
+            /* GCGW INDUSTRIAL PALETTE
+               Deep Navy           #07111F
+               Structural Navy     #0D1B2A
+               Steel Blue          #142638
+               Construction Orange #F97316
+               Amber Highlight     #FF9F43
+               Architectural White #F5F7FA
+               Steel Silver        #A8B2BD
+            */
+
+            --deep-navy:
+                #07111F;
+
+            --navy-2:
+                #0A1725;
+
+            --structural-navy:
+                #0D1B2A;
+
+            --steel-blue:
+                #142638;
+
+            --accent:
+                #F97316;
+
+            --accent-light:
+                #FF9F43;
+
+            --architectural-white:
+                #F5F7FA;
+
+            --steel-silver:
+                #DCE4EC;
+
+            --muted-steel:
+                #A8B2BD;
+
+            --line:
+                rgba(249,115,22,.22);
+
+            --line-light:
+                rgba(168,178,189,.16);
+
+            --serif:
+                "Playfair Display",
+                Georgia,
+                serif;
+
+            --sans:
+                "DM Sans",
+                Arial,
+                sans-serif;
+
+            --display:
+                "Manrope",
+                Arial,
+                sans-serif;
+
+            --ease:
+                cubic-bezier(.16,1,.3,1);
+
+        }
+
+
+        /* =================================================
+           RESET
+        ================================================= */
+
+        * {
+
+            margin: 0;
+
+            padding: 0;
+
+            box-sizing: border-box;
+
+        }
+
+
+        html {
+
+            scroll-behavior: smooth;
+
+            background:
+                var(--deep-navy);
+
+        }
+
+
+        body {
+
+            margin: 0;
+
+            background:
+                var(--deep-navy);
+
+            color:
+                var(--architectural-white);
+
+            font-family:
+                var(--sans);
+
+            overflow-x: hidden;
+
+            cursor:
+                default;
+
+        }
+
+
+        body.no-scroll {
+
+            overflow:
+                hidden;
+
+        }
+
+
+        a {
+
+            color:
+                inherit;
+
+            text-decoration:
+                none;
+
+        }
+
+
+        img {
+
+            display:
+                block;
+
+            max-width:
+                100%;
+
+        }
+
+
+        button {
+
+            font:
+                inherit;
+
+        }
+
+
+        ::selection {
+
+            background:
+                var(--accent);
+
+            color:
+                var(--deep-navy);
+
+        }
+
+
+        /* =================================================
+           CUSTOM SCROLLBAR
+        ================================================= */
+
+        ::-webkit-scrollbar {
+
+            width:
+                7px;
+
+        }
+
+
+        ::-webkit-scrollbar-track {
+
+            background:
+                var(--deep-navy);
+
+        }
+
+
+        ::-webkit-scrollbar-thumb {
+
+            background:
+                var(--accent);
+
+        }
+
+
+        /* =================================================
+           GRAIN
+        ================================================= */
+
+        body::before {
+
+            content:
+                "";
+
+            position:
+                fixed;
+
+            inset:
+                0;
+
+            pointer-events:
+                none;
+
+            z-index:
+                9997;
+
+            opacity:
+                .035;
+
+            background-image:
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+
+        }
+
+
+        /* =================================================
+           CURSOR GLOW
+        ================================================= */
+
+        .cursor-glow {
+
+            position:
+                fixed;
+
+            width:
+                260px;
+
+            height:
+                260px;
+
+            border-radius:
+                50%;
+
+            pointer-events:
+                none;
+
+            z-index:
+                9996;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(249,115,22,.10),
+                    transparent 68%
+                );
+
+            transform:
+                translate(-50%,-50%);
+
+            opacity:
+                0;
+
+        }
+
+
+        /* =================================================
+           PRELOADER
+        ================================================= */
+
+        #loader {
+
+            position:
+                fixed;
+
+            inset:
+                0;
+
+            z-index:
+                10000;
+
+            background:
+                var(--deep-navy);
+
+            display:
+                flex;
+
+            justify-content:
+                center;
+
+            align-items:
+                center;
+
+            overflow:
+                hidden;
+
+        }
+
+
+        .loader-inner {
+
+            text-align:
+                center;
+
+            position:
+                relative;
+
+        }
+
+
+        .loader-logo {
+
+            width:
+                125px;
+
+            height:
+                125px;
+
+            object-fit:
+                contain;
+
+            margin:
+                auto;
+
+            filter:
+                grayscale(100%)
+                brightness(1.7);
+
+            opacity:
+                0;
+
+            transform:
+                scale(.65);
+
+        }
+
+
+        .loader-line {
+
+            width:
+                0;
+
+            height:
+                1px;
+
+            background:
+                var(--accent);
+
+            margin:
+                28px auto 20px;
+
+        }
+
+
+        .loader-name {
+
+            color:
+                var(--architectural-white);
+
+            font-size:
+                11px;
+
+            letter-spacing:
+                5px;
+
+            font-weight:
+                600;
+
+            opacity:
+                0;
+
+        }
+
+
+        .loader-est {
+
+            margin-top:
+                12px;
+
+            color:
+                var(--accent);
+
+            font-size:
+                8px;
+
+            letter-spacing:
+                4px;
+
+            opacity:
+                0;
+
+        }
+
+
+        /* =================================================
+           INTRO LOGO OVERLAY
+        ================================================= */
+
+        .intro-mark {
+
+            position:
+                fixed;
+
+            z-index:
+                9998;
+
+            top:
+                50%;
+
+            left:
+                50%;
+
+            transform:
+                translate(-50%,-50%);
+
+            pointer-events:
+                none;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                20px;
+
+            opacity:
+                0;
+
+        }
+
+
+        .intro-mark img {
+
+            width:
+                100px;
+
+            height:
+                100px;
+
+            object-fit:
+                contain;
+
+            filter:
+                grayscale(100%)
+                brightness(1.8);
+
+        }
+
+
+        .intro-mark-text {
+
+            white-space:
+                nowrap;
+
+        }
+
+
+        .intro-mark-text small {
+
+            display:
+                block;
+
+            color:
+                var(--accent);
+
+            font-size:
+                8px;
+
+            letter-spacing:
+                4px;
+
+            margin-bottom:
+                7px;
+
+        }
+
+
+        .intro-mark-text strong {
+
+            font-family:
+                var(--display);
+
+            font-size:
+                20px;
+
+            letter-spacing:
+                2px;
+
+            font-weight:
+                700;
+
+        }
+
+
+        /* =================================================
+           NAVIGATION
+        ================================================= */
+
+        .nav {
+
+            position:
+                fixed;
+
+            top:
+                0;
+
+            left:
+                0;
+
+            right:
+                0;
+
+            height:
+                88px;
+
+            z-index:
+                900;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            padding:
+                0 5vw;
+
+            background:
+                rgba(7,17,31,.45);
+
+            backdrop-filter:
+                blur(18px);
+
+            border-bottom:
+                1px solid
+                transparent;
+
+            transition:
+                .5s ease;
+
+        }
+
+
+        .nav.scrolled {
+
+            background:
+                rgba(7,17,31,.88);
+
+            border-color:
+                var(--line);
+
+        }
+
+
+        .nav-brand {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                14px;
+
+            opacity:
+                0;
+
+            transform:
+                translateX(-30px);
+
+        }
+
+
+        .nav-brand img {
+
+            width:
+                38px;
+
+            height:
+                38px;
+
+            object-fit:
+                contain;
+
+        }
+
+
+        .nav-brand-text {
+
+            font-size:
+                11px;
+
+            font-weight:
+                700;
+
+            letter-spacing:
+                2px;
+
+        }
+
+
+        .nav-brand-text span {
+
+            display:
+                block;
+
+            color:
+                var(--accent);
+
+            font-size:
+                7px;
+
+            letter-spacing:
+                3px;
+
+            margin-top:
+                3px;
+
+        }
+
+
+        .nav-links {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                30px;
+
+            list-style:
+                none;
+
+        }
+
+
+        .nav-links a {
+
+            position:
+                relative;
+
+            color:
+                var(--steel-silver);
+
+            font-size:
+                9px;
+
+            font-weight:
+                600;
+
+            letter-spacing:
+                2px;
+
+            text-transform:
+                uppercase;
+
+            transition:
+                color .3s ease;
+
+        }
+
+
+        .nav-links a::after {
+
+            content:
+                "";
+
+            position:
+                absolute;
+
+            left:
+                0;
+
+            bottom:
+                -7px;
+
+            width:
+                0;
+
+            height:
+                1px;
+
+            background:
+                var(--accent);
+
+            transition:
+                width .35s var(--ease);
+
+        }
+
+
+        .nav-links a:hover {
+
+            color:
+                var(--architectural-white);
+
+        }
+
+
+        .nav-links a:hover::after {
+
+            width:
+                100%;
+
+        }
+
+
+        .nav-contact {
+
+            border:
+                1px solid
+                var(--line);
+
+            padding:
+                12px 17px;
+
+            color:
+                var(--accent) !important;
+
+        }
+
+
+        .nav-contact::after {
+
+            display:
+                none;
+
+        }
+
+
+        /* =================================================
+           HERO
+        ================================================= */
+
+        .hero {
+
+            min-height:
+                100vh;
+
+            position:
+                relative;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            overflow:
+                hidden;
+
+            background:
+                var(--deep-navy);
+
+        }
+
+
+        .hero-image {
+
+            position:
+                absolute;
+
+            inset:
+                0;
+
+            z-index:
+                0;
+
+        }
+
+
+        .hero-image img {
+
+            width:
+                100%;
+
+            height:
+                100%;
+
+            object-fit:
+                cover;
+
+            object-position:
+                center;
+
+            opacity:
+                .35;
+
+            filter:
+                grayscale(35%)
+                contrast(1.15);
+
+            transform:
+                scale(1.08);
+
+        }
+
+
+        .hero-image::after {
+
+            content:
+                "";
+
+            position:
+                absolute;
+
+            inset:
+                0;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(7,17,31,.98) 0%,
+                    rgba(7,17,31,.78) 45%,
+                    rgba(7,17,31,.30) 100%
+                );
+
+        }
+
+
+        .hero-grid {
+
+            position:
+                absolute;
+
+            inset:
+                0;
+
+            background-image:
+                linear-gradient(
+                    rgba(249,115,22,.06) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(249,115,22,.06) 1px,
+                    transparent 1px
+                );
+
+            background-size:
+                100px 100px;
+
+            mask-image:
+                linear-gradient(
+                    to right,
+                    black,
+                    transparent
+                );
+
+            opacity:
+                .4;
+
+        }
+
+
+        .hero-content {
+
+            position:
+                relative;
+
+            z-index:
+                3;
+
+            width:
+                min(1200px,90%);
+
+            margin:
+                0 auto;
+
+            padding-top:
+                70px;
+
+        }
+
+
+        .hero-kicker {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                12px;
+
+            color:
+                var(--accent);
+
+            font-size:
+                9px;
+
+            letter-spacing:
+                4px;
+
+            font-weight:
+                700;
+
+            margin-bottom:
+                25px;
+
+            opacity:
+                0;
+
+            transform:
+                translateY(25px);
+
+        }
+
+
+        .hero-kicker::before {
+
+            content:
+                "";
+
+            width:
+                35px;
+
+            height:
+                1px;
+
+            background:
+                var(--accent);
+
+        }
+
+
+        .hero-title {
+
+            max-width:
+                850px;
+
+            font-family:
+                var(--display);
+
+            font-size:
+                clamp(
+                    55px,
+                    8.5vw,
+                    130px
+                );
+
+            line-height:
+                .91;
+
+            letter-spacing:
+                -5px;
+
+            font-weight:
+                700;
+
+            text-transform:
+                uppercase;
+
+            opacity:
+                0;
+
+            transform:
+                translateY(80px);
+
+        }
+
+
+        .hero-title .serif {
+
+            font-family:
+                var(--serif);
+
+            text-transform:
+                none;
+
+            font-weight:
+                400;
+
+            font-style:
+                italic;
+
+            color:
+                var(--accent);
+
+            letter-spacing:
+                -5px;
+
+        }
+
+
+        .hero-description {
+
+            max-width:
+                600px;
+
+            color:
+                var(--steel-silver);
+
+            font-size:
+                15px;
+
+            line-height:
+                1.8;
+
+            margin-top:
+                32px;
+
+            opacity:
+                0;
+
+            transform:
+                translateY(35px);
+
+        }
+
+
+        .hero-actions {
+
+            display:
+                flex;
+
+            gap:
+                18px;
+
+            margin-top:
+                35px;
+
+            opacity:
+                0;
+
+            transform:
+                translateY(25px);
+
+        }
+
+
+        .luxury-button {
+
+            position:
+                relative;
+
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            gap:
+                14px;
+
+            padding:
+                16px 22px;
+
+            border:
+                1px solid
+                var(--accent);
+
+            color:
+                var(--accent);
+
+            font-size:
+                9px;
+
+            letter-spacing:
+                2px;
+
+            font-weight:
+                700;
+
+            overflow:
+                hidden;
+
+            transition:
+                color .4s ease;
+
+        }
+
+
+        .luxury-button::before {
+
+            content:
+                "";
+
+            position:
+                absolute;
+
+            inset:
+                0;
+
+            background:
+                var(--accent);
+
+            transform:
+                translateX(-105%);
+
+            transition:
+                transform .5s var(--ease);
+
+            z-index:
+                -1;
+
+        }
+
+
+        .luxury-button:hover {
+
+            color:
+                var(--deep-navy);
+
+        }
+
+
+        .luxury-button:hover::before {
+
+            transform:
+                translateX(0);
+
+        }
+
+
+        .luxury-button.secondary {
+
+            border-color:
+                var(--line-light);
+
+            color:
+                var(--architectural-white);
+
+        }
+
+
+        .hero-scroll {
+
+            position:
+                absolute;
+
+            right:
+                5vw;
+
+            bottom:
+                45px;
+
+            z-index:
+                4;
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            align-items:
+                center;
+
+            gap:
+                12px;
+
+            color:
+                var(--muted-steel);
+
+            font-size:
+                7px;
+
+            letter-spacing:
+                3px;
+
+            writing-mode:
+                vertical-rl;
+
+        }
+
+
+        .hero-scroll::after {
+
+            content:
+                "";
+
+            width:
+                1px;
+
+            height:
+                55px;
+
+            background:
+                linear-gradient(
+                    var(--accent),
+                    transparent
+                );
+
+            animation:
+                scrollLine 2s infinite;
+
+        }
+
+
+        @keyframes scrollLine {
+
+            0% {
+                transform:
+                    scaleY(0);
+                transform-origin:
+                    top;
+            }
+
+            50% {
+                transform:
+                    scaleY(1);
+            }
+
+            100% {
+                transform:
+                    scaleY(0);
+                transform-origin:
+                    bottom;
+            }
+
+        }
+
+
+        /* =================================================
+           STATS
+        ================================================= */
+
+        .stats {
+
+            background:
+                var(--structural-navy);
+
+            border-top:
+                1px solid
+                var(--line);
+
+            border-bottom:
+                1px solid
+                var(--line);
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(4,1fr);
+
+        }
+
+
+        .stat {
+
+            padding:
+                45px 35px;
+
+            border-right:
+                1px solid
+                var(--line);
+
+        }
+
+
+        .stat:last-child {
+
+            border-right:
+                none;
+
+        }
+
+
+        .stat-number {
+
+            font-family:
+                var(--display);
+
+            font-size:
+                clamp(38px,5vw,65px);
+
+            line-height:
+                1;
+
+            font-weight:
+                700;
+
+            color:
+                var(--architectural-white);
+
+        }
+
+
+        .stat-number span {
+
+            color:
+                var(--accent);
+
+        }
+
+
+        .stat-label {
+
+            margin-top:
+                10px;
+
+            color:
+                var(--muted-steel);
+
+            font-size:
+                8px;
+
+            letter-spacing:
+                2px;
+
+            text-transform:
+                uppercase;
+
+        }
+
+
+        /* =================================================
+           GENERAL SECTION
+        ================================================= */
+
+        .section {
+
+            position:
+                relative;
+
+            padding:
+                150px 5vw;
+
+            overflow:
+                hidden;
+
+        }
+
+
+        .section-dark {
+
+            background:
+                var(--deep-navy);
+
+        }
+
+
+        .section-light {
+
+            background:
+                var(--architectural-white);
+
+            color:
+                var(--deep-navy);
+
+        }
+
+
+        .section-graphite {
+
+            background:
+                var(--structural-navy);
+
+        }
+
+
+        .container {
+
+            width:
+                min(1200px,100%);
+
+            margin:
+                auto;
+
+        }
+
+
+        .section-head {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                .35fr 1fr;
+
+            gap:
+                50px;
+
+            margin-bottom:
+                80px;
+
+        }
+
+
+        .eyebrow {
+
+            color:
+                var(--accent);
+
+            font-size:
+                8px;
+
+            font-weight:
+                700;
+
+            letter-spacing:
+                4px;
+
+        }
+
+
+        .section-title {
+
+            font-family:
+                var(--display);
+
+            font-size:
+                clamp(
+                    48px,
+                    7vw,
+                    100px
+                );
+
+            line-height:
+                .92;
+
+            letter-spacing:
+                -4px;
+
+            text-transform:
+                uppercase;
+
+            font-weight:
+                700;
+
+        }
+
+
+        .section-title em {
+
+            font-family:
+                var(--serif);
+
+            color:
+                var(--accent);
+
+            text-transform:
+                none;
+
+            font-weight:
+                400;
+
+        }
+
+
+        .section-intro {
+
+            max-width:
+                600px;
+
+            margin-top:
+                25px;
+
+            color:
+                var(--muted-steel);
+
+            line-height:
+                1.8;
+
+            font-size:
+                14px;
+
+        }
+
+
+        .light-text {
+
+            color:
+                #4E6072;
+
+        }
+
+
+        /* =================================================
+           ABOUT
+        ================================================= */
+
+        .about-grid {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap:
+                100px;
+
+            align-items:
+                center;
+
+        }
+
+
+        .about-image {
+
+            position:
+                relative;
+
+            height:
+                600px;
+
+            overflow:
+                hidden;
+
+        }
+
+
+        .about-image img {
+
+            width:
+                100%;
+
+            height:
+                100%;
+
+            object-fit:
+                cover;
+
+            filter:
+                grayscale(25%)
+                contrast(1.08);
+
+            transition:
+                transform 1.2s var(--ease);
+
+        }
+
+
+        .about-image:hover img {
+
+            transform:
+                scale(1.06);
+
+        }
+
+
+        .about-image::after {
+
+            content:
+                "";
+
+            position:
+                absolute;
+
+            inset:
+                14px;
+
+            border:
+                1px solid
+                rgba(249,115,22,.35);
+
+            pointer-events:
+                none;
+
+        }
+
+
+        .about-side {
+
+            padding-right:
+                4vw;
+
+        }
+
+
+        .about-number {
+
+            color:
+                var(--accent);
+
+            font-size:
+                10px;
+
+            letter-spacing:
+                4px;
+
+            font-weight:
+                700;
+
+            margin-bottom:
+                25px;
+
+        }
+
+
+        .about-title {
+
+            font-family:
+                var(--display);
+
+            font-size:
+                clamp(
+                    42px,
+                    5vw,
+                    72px
+                );
+
+            line-height:
+                .95;
+
+            letter-spacing:
+                -3px;
+
+            text-transform:
+                uppercase;
+
+        }
+
+
+        .about-title span {
+
+            display:
+                block;
+
+            font-family:
+                var(--serif);
+
+            color:
+                var(--accent);
+
+            text-transform:
+                none;
+
+            font-weight:
+                400;
+
+            font-style:
+                italic;
+
+        }
+
+
+        .about-text {
+
+            color:
+                var(--muted-steel);
+
+            line-height:
+                1.9;
+
+            font-size:
+                14px;
+
+            margin:
+                35px 0;
+
+        }
+
+
+        .about-points {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(2,1fr);
+
+            gap:
+                18px;
+
+        }
+
+
+        .about-point {
+
+            border-top:
+                1px solid
+                var(--line);
+
+            padding-top:
+                17px;
+
+        }
+
+
+        .about-point strong {
+
+            display:
+                block;
+
+            font-size:
+                12px;
+
+            color:
+                var(--architectural-white);
+
+            margin-bottom:
+                6px;
+
+        }
+
+
+        .about-point span {
+
+            color:
+                var(--muted-steel);
+
+            font-size:
+                10px;
+
+        }
+
+
+        /* =================================================
+           SERVICES
+        ================================================= */
+
+        .services {
+
+            border-top:
+                1px solid
+                var(--line-light);
+
+        }
+
+
+        .service-list {
+
+            border-top:
+                1px solid
+                var(--line);
+
+        }
+
+
+        .service {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                90px 1fr 100px;
+
+            align-items:
+                center;
+
+            min-height:
+                150px;
+
+            border-bottom:
+                1px solid
+                var(--line);
+
+            transition:
+                padding .5s var(--ease),
+                background .5s ease;
+
+        }
+
+
+        .service:hover {
+
+            padding:
+                0 30px;
+
+            background:
+                rgba(249,115,22,.035);
+
+        }
+
+
+        .service-no {
+
+            color:
+                var(--accent);
+
+            font-size:
+                9px;
+
+            letter-spacing:
+                2px;
+
+        }
+
+
+        .service-name {
+
+            font-family:
+                var(--display);
+
+            font-size:
+                clamp(
+                    27px,
+                    4vw,
+                    55px
+                );
+
+            letter-spacing:
+                -2px;
+
+            font-weight:
+                600;
+
+            text-transform:
+                uppercase;
+
+        }
+
+
+        .service-name span {
+
+            display:
+                block;
+
+            color:
+                var(--muted-steel);
+
+            font-family:
+                var(--sans);
+
+            font-size:
+                10px;
+
+            letter-spacing:
+                1px;
+
+            font-weight:
+                400;
+
+            text-transform:
+                none;
+
+            margin-top:
+                8px;
+
+        }
+
+
+        .service-arrow {
+
+            font-size:
+                28px;
+
+            color:
+                var(--accent);
+
+            text-align:
+                right;
+
+            transition:
+                transform .4s ease;
+
+        }
+
+
+        .service:hover .service-arrow {
+
+            transform:
+                translate(8px,-8px);
+
+        }
+
+
+        /* =================================================
+           PROJECTS
+        ================================================= */
+
+        .projects {
+
+            background:
+                var(--deep-navy);
+
+        }
+
+
+        .projects-intro {
+
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                end;
+
+            margin-bottom:
+                70px;
+
+        }
+
+
+        .projects-label {
+
+            color:
+                var(--accent);
+
+            font-size:
+                9px;
+
+            letter-spacing:
+                4px;
+
+        }
+
+
+        .projects-count {
+
+            color:
+                var(--muted-steel);
+
+            font-size:
+                10px;
+
+            letter-spacing:
+                2px;
+
+        }
+
+
+        .project {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                1.35fr .65fr;
+
+            min-height:
+                620px;
+
+            margin-bottom:
+                100px;
+
+            border-top:
+                1px solid
+                var(--line);
+
+            padding-top:
+                35px;
+
+        }
+
+
+        .project:nth-child(even) {
+
+            grid-template-columns:
+                .65fr 1.35fr;
+
+        }
+
+
+        .project:nth-child(even)
+        .project-image {
+
+            order:
+                2;
+
+        }
+
+
+        .project:nth-child(even)
+        .project-content {
+
+            order:
+                1;
+
+            padding:
+                60px 80px 0 0;
+
+        }
+
+
+        .project-image {
+
+            position:
+                relative;
+
+            overflow:
+                hidden;
+
+            height:
+                560px;
+
+        }
+
+
+        .project-image img {
+
+            width:
+                100%;
+
+            height:
+                100%;
+
+            object-fit:
+                cover;
+
+            filter:
+                grayscale(25%)
+                contrast(1.12);
+
+            transform:
+                scale(1.08);
+
+            transition:
+                transform 1.3s var(--ease),
+                filter 1s ease;
+
+        }
+
+
+        .project:hover .project-image img {
+
+            transform:
+                scale(1);
+
+            filter:
+                grayscale(0%)
+                contrast(1.05);
+
+        }
+
+
+        .project-image::after {
+
+            content:
+                "";
+
+            position:
+                absolute;
+
+            inset:
+                18px;
+
+            border:
+                1px solid
+                rgba(249,115,22,.32);
+
+            pointer-events:
+                none;
+
+        }
+
+
+        .project-content {
+
+            padding:
+                60px 0 0 80px;
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            justify-content:
+                center;
+
+        }
+
+
+        .project-number {
+
+            color:
+                var(--accent);
+
+            font-size:
+                9px;
+
+            letter-spacing:
+                4px;
+
+            margin-bottom:
+                25px;
+
+        }
+
+
+        .project-title {
+
+            font-family:
+                var(--display);
+
+            font-size:
+                clamp(
+                    38px,
+                    5vw,
+                    70px
+                );
+
+            line-height:
+                .95;
+
+            text-transform:
+                uppercase;
+
+            letter-spacing:
+                -3px;
+
+        }
+
+
+        .project-description {
+
+            color:
+                var(--muted-steel);
+
+            line-height:
+                1.8;
+
+            font-size:
+                13px;
+
+            max-width:
+                430px;
+
+            margin:
+                25px 0;
+
+        }
+
+
+        .project-meta {
+
+            display:
+                flex;
+
+            gap:
+                30px;
+
+            flex-wrap:
+                wrap;
+
+        }
+
+
+        .project-meta div {
+
+            border-top:
+                1px solid
+                var(--line);
+
+            padding-top:
+                10px;
+
+        }
+
+
+        .project-meta small {
+
+            display:
+                block;
+
+            color:
+                var(--muted-steel);
+
+            font-size:
+                7px;
+
+            letter-spacing:
+                2px;
+
+            margin-bottom:
+                4px;
+
+        }
+
+
+        .project-meta strong {
+
+            font-size:
+                10px;
+
+            color:
+                var(--steel-silver);
+
+        }
+
+
+        /* =================================================
+           LEADERSHIP
+        ================================================= */
+
+        .leaders-grid {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(2,1fr);
+
+            gap:
+                40px;
+
+            max-width:
+                1000px;
+
+            margin:
+                auto;
+
+            perspective:
+                1200px;
+
+        }
+
+
+        .leader-card {
+
+            position:
+                relative;
+
+            text-align:
+                center;
+
+            transform-style:
+                preserve-3d;
+
+            transition:
+                transform .4s ease;
+
+        }
+
+
+        .leader-image-wrap {
+
+            height:
+                530px;
+
+            position:
+                relative;
+
+            overflow:
+                hidden;
+
+            display:
+                flex;
+
+            align-items:
+                end;
+
+            justify-content:
+                center;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #142638,
+                    #07111F
+                );
+
+            border:
+                1px solid
+                var(--line);
+
+        }
+
+
+        .leader-image-wrap::before {
+
+            content:
+                "";
+
+            position:
+                absolute;
+
+            width:
+                300px;
+
+            height:
+                300px;
+
+            border-radius:
+                50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(249,115,22,.22),
+                    transparent 68%
+                );
+
+            filter:
+                blur(18px);
+
+        }
+
+
+        .leader-image {
+
+            position:
+                relative;
+
+            z-index:
+                2;
+
+            width:
+                92%;
+
+            height:
+                94%;
+
+            object-fit:
+                cover;
+
+            object-position:
+                center top;
+
+            filter:
+                grayscale(20%)
+                contrast(1.05);
+
+            transition:
+                transform .9s var(--ease);
+
+        }
+
+
+        .leader-card:hover
+        .leader-image {
+
+            transform:
+                scale(1.035)
+                translateY(-8px);
+
+        }
+
+
+        .leader-info {
+
+            padding:
+                25px 0 0;
+
+        }
+
+
+        .leader-role {
+
+            color:
+                var(--accent);
+
+            font-size:
+                8px;
+
+            letter-spacing:
+                3px;
+
+            font-weight:
+                700;
+
+        }
+
+
+        .leader-name {
+
+            font-family:
+                var(--display);
+
+            font-size:
+                clamp(
+                    27px,
+                    3vw,
+                    42px
+                );
+
+            margin-top:
+                9px;
+
+            letter-spacing:
+                -1px;
+
+        }
+
+
+        .leader-brand {
+
+            color:
+                var(--muted-steel);
+
+            font-size:
+                8px;
+
+            letter-spacing:
+                3px;
+
+            margin-top:
+                7px;
+
+        }
+
+
+        /* =================================================
+           TEAM NAMES
+        ================================================= */
+
+        .remaining-team {
+
+            max-width:
+                1000px;
+
+            margin:
+                110px auto 0;
+
+        }
+
+
+        .team-heading {
+
+            color:
+                var(--accent);
+
+            font-size:
+                9px;
+
+            letter-spacing:
+                4px;
+
+            border-top:
+                1px solid
+                var(--line);
+
+            padding:
+                25px 0;
+
+        }
+
+
+        .team-name {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                80px 1fr 150px;
+
+            align-items:
+                center;
+
+            padding:
+                25px 5px;
+
+            border-top:
+                1px solid
+                var(--line);
+
+            transition:
+                padding .4s var(--ease),
+                background .4s ease;
+
+        }
+
+
+        .team-name:last-child {
+
+            border-bottom:
+                1px solid
+                var(--line);
+
+        }
+
+
+        .team-name:hover {
+
+            padding-left:
+                25px;
+
+            padding-right:
+                25px;
+
+            background:
+                rgba(249,115,22,.035);
+
+        }
+
+
+        .team-number {
+
+            color:
+                var(--accent);
+
+            font-size:
+                9px;
+
+            letter-spacing:
+                2px;
+
+        }
+
+
+        .team-person {
+
+            font-family:
+                var(--display);
+
+            font-size:
+                clamp(
+                    20px,
+                    2.5vw,
+                    30px
+                );
+
+        }
+
+
+        .team-role {
+
+            color:
+                var(--muted-steel);
+
+            font-size:
+                7px;
+
+            letter-spacing:
+                2px;
+
+            text-align:
+                right;
+
+        }
+
+
+        /* =================================================
+           CONTACT
+        ================================================= */
+
+        .contact {
+
+            min-height:
+                75vh;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            background:
+                var(--architectural-white);
+
+            color:
+                var(--deep-navy);
+
+        }
+
+
+        .contact-grid {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                1.2fr .8fr;
+
+            gap:
+                100px;
+
+            align-items:
+                end;
+
+        }
+
+
+        .contact-title {
+
+            font-family:
+                var(--display);
+
+            font-size:
+                clamp(
+                    55px,
+                    8vw,
+                    120px
+                );
+
+            line-height:
+                .86;
+
+            letter-spacing:
+                -6px;
+
+            text-transform:
+                uppercase;
+
+        }
+
+
+        .contact-title em {
+
+            display:
+                block;
+
+            font-family:
+                var(--serif);
+
+            font-weight:
+                400;
+
+            font-style:
+                italic;
+
+            color:
+                #F97316;
+
+            text-transform:
+                none;
+
+        }
+
+
+        .contact-copy {
+
+            color:
+                #516171;
+
+            font-size:
+                14px;
+
+            line-height:
+                1.8;
+
+            margin:
+                35px 0;
+
+            max-width:
+                520px;
+
+        }
+
+
+        .contact .luxury-button {
+
+            color:
+                var(--deep-navy);
+
+            border-color:
+                var(--deep-navy);
+
+        }
+
+
+        .contact .luxury-button::before {
+
+            background:
+                var(--deep-navy);
+
+        }
+
+
+        .contact .luxury-button:hover {
+
+            color:
+                var(--architectural-white);
+
+        }
+
+
+        .contact-details {
+
+            border-top:
+                1px solid
+                rgba(7,17,31,.18);
+
+        }
+
+
+        .contact-item {
+
+            padding:
+                22px 0;
+
+            border-bottom:
+                1px solid
+                rgba(7,17,31,.18);
+
+        }
+
+
+        .contact-item small {
+
+            display:
+                block;
+
+            font-size:
+                7px;
+
+            letter-spacing:
+                3px;
+
+            color:
+                #777;
+
+            margin-bottom:
+                7px;
+
+        }
+
+
+        .contact-item strong {
+
+            font-size:
+                14px;
+
+            font-weight:
+                500;
+
+        }
+
+
+        /* =================================================
+           FOOTER
+        ================================================= */
+
+        footer {
+
+            background:
+                var(--deep-navy);
+
+            padding:
+                100px 5vw 30px;
+
+        }
+
+
+        .footer-top {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                1.4fr 1fr 1fr 1fr;
+
+            gap:
+                50px;
+
+            padding-bottom:
+                80px;
+
+        }
+
+
+        .footer-brand {
+
+            max-width:
+                350px;
+
+        }
+
+
+        .footer-logo {
+
+            width:
+                70px;
+
+            height:
+                70px;
+
+            object-fit:
+                contain;
+
+            margin-bottom:
+                25px;
+
+        }
+
+
+        .footer-brand h3 {
+
+            font-family:
+                var(--display);
+
+            font-size:
+                18px;
+
+            letter-spacing:
+                2px;
+
+        }
+
+
+        .footer-brand p {
+
+            color:
+                var(--muted-steel);
+
+            line-height:
+                1.7;
+
+            font-size:
+                11px;
+
+            margin-top:
+                15px;
+
+        }
+
+
+        .footer-column h4 {
+
+            color:
+                var(--accent);
+
+            font-size:
+                8px;
+
+            letter-spacing:
+                3px;
+
+            margin-bottom:
+                20px;
+
+        }
+
+
+        .footer-column a {
+
+            display:
+                block;
+
+            color:
+                var(--steel-silver);
+
+            font-size:
+                11px;
+
+            margin-bottom:
+                13px;
+
+            transition:
+                color .3s ease;
+
+        }
+
+
+        .footer-column a:hover {
+
+            color:
+                var(--accent);
+
+        }
+
+
+        .footer-bottom {
+
+            border-top:
+                1px solid
+                var(--line);
+
+            padding-top:
+                25px;
+
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            color:
+                var(--muted-steel);
+
+            font-size:
+                8px;
+
+            letter-spacing:
+                1px;
+
+        }
+
+
+        .footer-bottom strong {
+
+            color:
+                var(--accent);
+
+            font-weight:
+                600;
+
+        }
+
+
+        /* =================================================
+           REVEAL
+        ================================================= */
+
+        .reveal {
+
+            opacity:
+                0;
+
+            transform:
+                translateY(60px);
+
+        }
+
+
+        .reveal-left {
+
+            opacity:
+                0;
+
+            transform:
+                translateX(-70px);
+
+        }
+
+
+        .reveal-right {
+
+            opacity:
+                0;
+
+            transform:
+                translateX(70px);
+
+        }
+
+
+        /* =================================================
+           MOBILE
+        ================================================= */
+
+        @media(max-width:900px) {
+
+            .nav {
+
+                height:
+                    72px;
+
+                padding:
+                    0 6vw;
+
+            }
+
+
+            .nav-links {
+
+                display:
+                    none;
+
+            }
+
+
+            .nav-brand {
+
+                opacity:
+                    1;
+
+                transform:
+                    none;
+
+            }
+
+
+            .hero-content {
+
+                padding-top:
+                    40px;
+
+            }
+
+
+            .hero-title {
+
+                font-size:
+                    clamp(
+                        48px,
+                        12vw,
+                        85px
+                    );
+
+                letter-spacing:
+                    -3px;
+
+            }
+
+
+            .stats {
+
+                grid-template-columns:
+                    repeat(2,1fr);
+
+            }
+
+
+            .stat:nth-child(2) {
+
+                border-right:
+                    none;
+
+            }
+
+
+            .stat:nth-child(3),
+            .stat:nth-child(4) {
+
+                border-top:
+                    1px solid
+                    var(--line);
+
+            }
+
+
+            .section {
+
+                padding:
+                    100px 6vw;
+
+            }
+
+
+            .section-head {
+
+                grid-template-columns:
+                    1fr;
+
+                gap:
+                    20px;
+
+                margin-bottom:
+                    55px;
+
+            }
+
+
+            .about-grid {
+
+                grid-template-columns:
+                    1fr;
+
+                gap:
+                    55px;
+
+            }
+
+
+            .about-image {
+
+                height:
+                    480px;
+
+                order:
+                    2;
+
+            }
+
+
+            .about-side {
+
+                padding:
+                    0;
+
+            }
+
+
+            .project,
+            .project:nth-child(even) {
+
+                grid-template-columns:
+                    1fr;
+
+                min-height:
+                    auto;
+
+                margin-bottom:
+                    80px;
+
+            }
+
+
+            .project-image,
+            .project:nth-child(even)
+            .project-image {
+
+                order:
+                    1;
+
+                height:
+                    430px;
+
+            }
+
+
+            .project-content,
+            .project:nth-child(even)
+            .project-content {
+
+                order:
+                    2;
+
+                padding:
+                    40px 0 0;
+
+            }
+
+
+            .leaders-grid {
+
+                grid-template-columns:
+                    1fr;
+
+                max-width:
+                    500px;
+
+            }
+
+
+            .leader-image-wrap {
+
+                height:
+                    500px;
+
+            }
+
+
+            .contact-grid {
+
+                grid-template-columns:
+                    1fr;
+
+                gap:
+                    60px;
+
+            }
+
+
+            .contact-title {
+
+                letter-spacing:
+                    -4px;
+
+            }
+
+
+            .footer-top {
+
+                grid-template-columns:
+                    repeat(2,1fr);
+
+            }
+
+
+            .footer-brand {
+
+                grid-column:
+                    1 / -1;
+
+            }
+
+        }
+
+
+        @media(max-width:600px) {
+
+            .intro-mark img {
+
+                width:
+                    70px;
+
+                height:
+                    70px;
+
+            }
+
+
+            .intro-mark {
+
+                gap:
+                    12px;
+
+            }
+
+
+            .intro-mark-text strong {
+
+                font-size:
+                    14px;
+
+            }
+
+
+            .intro-mark-text small {
+
+                font-size:
+                    6px;
+
+                letter-spacing:
+                    2px;
+
+            }
+
+
+            .hero {
+
+                min-height:
+                    100svh;
+
+            }
+
+
+            .hero-title {
+
+                font-size:
+                    48px;
+
+                letter-spacing:
+                    -2px;
+
+            }
+
+
+            .hero-description {
+
+                font-size:
+                    13px;
+
+            }
+
+
+            .hero-actions {
+
+                flex-direction:
+                    column;
+
+                align-items:
+                    flex-start;
+
+            }
+
+
+            .hero-scroll {
+
+                display:
+                    none;
+
+            }
+
+
+            .stats {
+
+                grid-template-columns:
+                    1fr 1fr;
+
+            }
+
+
+            .stat {
+
+                padding:
+                    30px 20px;
+
+            }
+
+
+            .stat-number {
+
+                font-size:
+                    37px;
+
+            }
+
+
+            .about-image {
+
+                height:
+                    380px;
+
+            }
+
+
+            .about-points {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .service {
+
+                grid-template-columns:
+                    45px 1fr 40px;
+
+                min-height:
+                    120px;
+
+            }
+
+
+            .service:hover {
+
+                padding:
+                    0 10px;
+
+            }
+
+
+            .service-name {
+
+                font-size:
+                    24px;
+
+            }
+
+
+            .service-name span {
+
+                font-size:
+                    9px;
+
+            }
+
+
+            .project-image,
+            .project:nth-child(even)
+            .project-image {
+
+                height:
+                    330px;
+
+            }
+
+
+            .leader-image-wrap {
+
+                height:
+                    430px;
+
+            }
+
+
+            .team-name {
+
+                grid-template-columns:
+                    40px 1fr;
+
+            }
+
+
+            .team-role {
+
+                grid-column:
+                    2;
+
+                text-align:
+                    left;
+
+                margin-top:
+                    5px;
+
+            }
+
+
+            .footer-top {
+
+                grid-template-columns:
+                    1fr;
+
+            }
+
+
+            .footer-brand {
+
+                grid-column:
+                    auto;
+
+            }
+
+
+            .footer-bottom {
+
+                flex-direction:
+                    column;
+
+                gap:
+                    10px;
+
+            }
+
+        }
+
+
+        /* =================================================
+           REDUCED MOTION
+        ================================================= */
+
+        @media(prefers-reduced-motion:reduce) {
+
+            *,
+            *::before,
+            *::after {
+
+                animation-duration:
+                    .01ms !important;
+
+                animation-iteration-count:
+                    1 !important;
+
+                scroll-behavior:
+                    auto !important;
+
+                transition-duration:
+                    .01ms !important;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body class="no-scroll">
+
+
+<!-- =====================================================
+     CURSOR
+====================================================== -->
+
+<div class="cursor-glow"></div>
+
+
+<!-- =====================================================
+     PRELOADER
+====================================================== -->
+
+<div id="loader">
+
+    <div class="loader-inner">
+
+        <img
+            src="logo1.jpeg"
+            class="loader-logo"
+            alt="GCGW Logo"
+        >
+
+        <div class="loader-line"></div>
+
+        <div class="loader-name">
+            GOPAL CHAVAN GUNITING WORK
+        </div>
+
+        <div class="loader-est">
+            EST. WITH EXPERIENCE
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     INTRO MARK
+====================================================== -->
+
+<div class="intro-mark">
+
+    <img
+        src="logo1.jpeg"
+        alt="GCGW"
+    >
+
+    <div class="intro-mark-text">
+
+        <small>
+            GCGW • EST. WITH EXPERIENCE
+        </small>
+
+        <strong>
+            GOPAL CHAVAN GUNITING WORK
+        </strong>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     NAVIGATION
+====================================================== -->
+
+<nav class="nav">
+
+    <a
+        href="#home"
+        class="nav-brand"
+    >
+
+        <img
+            src="logo1.jpeg"
+            alt="GCGW"
+        >
+
+        <div class="nav-brand-text">
+
+            GOPAL CHAVAN GUNITING WORK
+
+            <span>
+                GCGW • STRUCTURAL ENGINEERING
+            </span>
+
+        </div>
+
+    </a>
+
+
+    <ul class="nav-links">
+
+        <li>
+            <a href="#about">
+                About
+            </a>
+        </li>
+
+        <li>
+            <a href="#services">
+                Services
+            </a>
+        </li>
+
+        <li>
+            <a href="#projects">
+                Projects
+            </a>
+        </li>
+
+        <li>
+            <a href="#team">
+                Leadership
+            </a>
+        </li>
+
+        <li>
+            <a
+                href="#contact"
+                class="nav-contact"
+            >
+                Contact ↗
+            </a>
+        </li>
+
+    </ul>
+
+</nav>
+
+
+<!-- =====================================================
+     HERO
+====================================================== -->
+
+<main id="home">
+
+    <section class="hero">
+
+        <div class="hero-image">
+
+            <!-- Change this image if you have a better
+                 hero/project image -->
+
+            <img
+                src="img 10.jpeg"
+                alt="GCGW Construction Project"
+            >
+
+        </div>
+
+
+        <div class="hero-grid"></div>
+
+
+        <div class="hero-content">
+
+            <div class="hero-kicker">
+
+                GCGW • EST. WITH EXPERIENCE
+
+            </div>
+
+
+            <h1 class="hero-title">
+
+                Strengthening
+                <span class="serif">
+                    Structures.
+                </span>
+
+                <br>
+
+                Building
+                <span class="serif">
+                    Trust.
+                </span>
+
+            </h1>
+
+
+            <p class="hero-description">
+
+                Specialists in Guniting, Structural Repairs,
+                Concrete Rehabilitation and Civil Engineering
+                Solutions.
+
+            </p>
+
+
+            <div class="hero-actions">
+
+                <a
+                    href="#contact"
+                    class="luxury-button magnetic"
+                >
+                    CONNECT WITH US
+                    <span>↗</span>
+                </a>
+
+
+                <a
+                    href="#projects"
+                    class="luxury-button secondary magnetic"
+                >
+                    VIEW OUR WORK
+                    <span>↓</span>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="hero-scroll">
+
+            SCROLL TO EXPLORE
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         STATS
+    ================================================== -->
+
+    <section class="stats">
+
+        <div class="stat">
+
+            <div
+                class="stat-number"
+                data-count="15"
+            >
+                0<span>+</span>
+            </div>
+
+            <div class="stat-label">
+                Years Experience
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div
+                class="stat-number"
+                data-count="500"
+            >
+                0<span>+</span>
+            </div>
+
+            <div class="stat-label">
+                Projects Completed
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div
+                class="stat-number"
+                data-count="10"
+            >
+                0<span>+</span>
+            </div>
+
+            <div class="stat-label">
+                Core Services
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div
+                class="stat-number"
+                data-count="10"
+            >
+                0<span>x</span>
+            </div>
+
+            <div class="stat-label">
+                Commitment to Quality
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         ABOUT
+    ================================================== -->
+
+    <section
+        class="section section-dark"
+        id="about"
+    >
+
+        <div class="container">
+
+            <div class="section-head reveal">
+
+                <div class="eyebrow">
+                    01 / ABOUT GCGW
+                </div>
+
+                <div>
+
+                    <h2 class="section-title">
+
+                        Engineered
+                        <em>
+                            for
+                        </em>
+                        Strength.
+
+                    </h2>
+
+                    <p class="section-intro">
+
+                        GCGW combines hands-on field experience,
+                        structural repair expertise and a long-term
+                        vision for civil engineering and infrastructure.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="about-grid">
+
+                <div class="about-image reveal-left">
+
+                    <img
+                        src="img 11.jpeg"
+                        alt="GCGW Structural Work"
+                    >
+
+                </div>
+
+
+                <div class="about-side reveal-right">
+
+                    <div class="about-number">
+                        15+ YEARS OF EXPERIENCE
+                    </div>
+
+
+                    <h3 class="about-title">
+
+                        Built on
+                        <span>
+                            experience.
+                        </span>
+
+                        Driven by
+                        <span>
+                            precision.
+                        </span>
+
+                    </h3>
+
+
+                    <p class="about-text">
+
+                        Gopal Chavan Guniting Work focuses on
+                        strengthening structures and delivering
+                        dependable solutions for concrete repair,
+                        rehabilitation and civil engineering work.
+
+                        <br><br>
+
+                        Our approach is simple:
+                        understand the structure, execute with
+                        discipline and build relationships that last.
+
+                    </p>
+
+
+                    <div class="about-points">
+
+                        <div class="about-point">
+
+                            <strong>
+                                Structural Expertise
+                            </strong>
+
+                            <span>
+                                Guniting & rehabilitation
+                            </span>
+
+                        </div>
+
+
+                        <div class="about-point">
+
+                            <strong>
+                                Field Experience
+                            </strong>
+
+                            <span>
+                                Practical execution
+                            </span>
+
+                        </div>
+
+
+                        <div class="about-point">
+
+                            <strong>
+                                Quality Focus
+                            </strong>
+
+                            <span>
+                                Precision in every stage
+                            </span>
+
+                        </div>
+
+
+                        <div class="about-point">
+
+                            <strong>
+                                Future Vision
+                            </strong>
+
+                            <span>
+                                Civil & infrastructure
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         SERVICES
+    ================================================== -->
+
+    <section
+        class="section section-graphite services"
+        id="services"
+    >
+
+        <div class="container">
+
+            <div class="section-head reveal">
+
+                <div class="eyebrow">
+                    02 / WHAT WE DO
+                </div>
+
+                <div>
+
+                    <h2 class="section-title">
+
+                        Our
+                        <em>
+                            Services.
+                        </em>
+
+                    </h2>
+
+                    <p class="section-intro">
+
+                        Specialized solutions designed to
+                        strengthen, repair and protect
+                        structures for the long term.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="service-list">
+
+
+                <div class="service">
+
+                    <div class="service-no">
+                        01
+                    </div>
+
+                    <div class="service-name">
+
+                        Guniting
+                        <span>
+                            Structural strengthening and concrete
+                            surface rehabilitation.
+                        </span>
+
+                    </div>
+
+                    <div class="service-arrow">
+                        ↗
+                    </div>
+
+                </div>
+
+
+                <div class="service">
+
+                    <div class="service-no">
+                        02
+                    </div>
+
+                    <div class="service-name">
+
+                        Structural Repairs
+                        <span>
+                            Repair solutions for damaged and
+                            deteriorated structural elements.
+                        </span>
+
+                    </div>
+
+                    <div class="service-arrow">
+                        ↗
+                    </div>
+
+                </div>
+
+
+                <div class="service">
+
+                    <div class="service-no">
+                        03
+                    </div>
+
+                    <div class="service-name">
+
+                        Concrete Rehabilitation
+                        <span>
+                            Restoration and protection of
+                            aging concrete structures.
+                        </span>
+
+                    </div>
+
+                    <div class="service-arrow">
+                        ↗
+                    </div>
+
+                </div>
+
+
+                <div class="service">
+
+                    <div class="service-no">
+                        04
+                    </div>
+
+                    <div class="service-name">
+
+                        Civil Engineering
+                        <span>
+                            Practical engineering solutions
+                            for demanding civil works.
+                        </span>
+
+                    </div>
+
+                    <div class="service-arrow">
+                        ↗
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         PROJECTS
+    ================================================== -->
+
+    <section
+        class="section projects"
+        id="projects"
+    >
+
+        <div class="container">
+
+            <div class="section-head reveal">
+
+                <div class="eyebrow">
+                    03 / SELECTED WORK
+                </div>
+
+                <div>
+
+                    <h2 class="section-title">
+
+                        Our
+                        <em>
+                            Projects.
+                        </em>
+
+                    </h2>
+
+                    <p class="section-intro">
+
+                        A selection of work representing
+                        our experience in structural repair,
+                        strengthening and rehabilitation.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROJECT 01 -->
+
+            <article class="project">
+
+                <div class="project-image reveal-left">
+
+                    <img
+                        src="img 10.jpeg"
+                        alt="GCGW Project 01"
+                    >
+
+                </div>
+
+
+                <div class="project-content reveal-right">
+
+                    <div class="project-number">
+                        PROJECT / 01
+                    </div>
+
+
+                    <h3 class="project-title">
+
+                        Structural
+                        Strengthening
+
+                    </h3>
+
+
+                    <p class="project-description">
+
+                        Specialized structural strengthening
+                        work focused on improving durability,
+                        integrity and long-term performance.
+
+                    </p>
+
+
+                    <div class="project-meta">
+
+                        <div>
+
+                            <small>
+                                CATEGORY
+                            </small>
+
+                            <strong>
+                                Guniting
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <small>
+                                FOCUS
+                            </small>
+
+                            <strong>
+                                Rehabilitation
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- PROJECT 02 -->
+
+            <article class="project">
+
+                <div class="project-image reveal-right">
+
+                    <img
+                        src="img 12.jpeg"
+                        alt="GCGW Project 02"
+                    >
+
+                </div>
+
+
+                <div class="project-content reveal-left">
+
+                    <div class="project-number">
+                        PROJECT / 02
+                    </div>
+
+
+                    <h3 class="project-title">
+
+                        Concrete
+                        Rehabilitation
+
+                    </h3>
+
+
+                    <p class="project-description">
+
+                        Rehabilitation work designed to restore
+                        damaged concrete surfaces and extend
+                        structural service life.
+
+                    </p>
+
+
+                    <div class="project-meta">
+
+                        <div>
+
+                            <small>
+                                CATEGORY
+                            </small>
+
+                            <strong>
+                                Concrete Repair
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <small>
+                                FOCUS
+                            </small>
+
+                            <strong>
+                                Restoration
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- PROJECT 03 -->
+
+            <article class="project">
+
+                <div class="project-image reveal-left">
+
+                    <img
+                        src="img 13.jpeg"
+                        alt="GCGW Project 03"
+                    >
+
+                </div>
+
+
+                <div class="project-content reveal-right">
+
+                    <div class="project-number">
+                        PROJECT / 03
+                    </div>
+
+
+                    <h3 class="project-title">
+
+                        Precision
+                        Execution
+
+                    </h3>
+
+
+                    <p class="project-description">
+
+                        Practical site execution supported by
+                        experienced teams and a disciplined
+                        approach to structural work.
+
+                    </p>
+
+
+                    <div class="project-meta">
+
+                        <div>
+
+                            <small>
+                                CATEGORY
+                            </small>
+
+                            <strong>
+                                Civil Work
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <small>
+                                FOCUS
+                            </small>
+
+                            <strong>
+                                Execution
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         LEADERSHIP
+    ================================================== -->
+
+    <section
+        class="section section-graphite"
+        id="team"
+    >
+
+        <div class="container">
+
+            <div class="section-head reveal">
+
+                <div class="eyebrow">
+                    04 / THE PEOPLE
+                </div>
+
+                <div>
+
+                    <h2 class="section-title">
+
+                        Our
+                        <em>
+                            Leadership.
+                        </em>
+
+                    </h2>
+
+                    <p class="section-intro">
+
+                        Experience, responsibility and
+                        execution at the centre of GCGW.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ONLY TWO ANIMATED AVATARS -->
+
+            <div class="leaders-grid">
+
+
+                <!-- GOPAL -->
+
+                <div class="leader-card">
+
+                    <div class="leader-image-wrap">
+
+                        <img
+                            src="owner 1.jpeg"
+                            alt="Gopal Chavan"
+                            class="leader-image"
+                        >
+
+                    </div>
+
+
+                    <div class="leader-info">
+
+                        <div class="leader-role">
+                            FOUNDER & MANAGING HEAD
+                        </div>
+
+                        <h3 class="leader-name">
+                            Gopal Chavan
+                        </h3>
+
+                        <div class="leader-brand">
+                            GCGW
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- KEVIL -->
+
+                <div class="leader-card">
+
+                    <div class="leader-image-wrap">
+
+                        <img
+                            src="owner 2.jpeg"
+                            alt="Kevil Jadhav"
+                            class="leader-image"
+                        >
+
+                    </div>
+
+
+                    <div class="leader-info">
+
+                        <div class="leader-role">
+                            BUSINESS PARTNER
+                        </div>
+
+                        <h3 class="leader-name">
+                            Kevil Jadhav
+                        </h3>
+
+                        <div class="leader-brand">
+                            GCGW
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- OTHER MEMBERS -->
+
+            <div class="remaining-team">
+
+                <div class="team-heading">
+                    OUR TEAM
+                </div>
+
+
+                <div class="team-name reveal">
+
+                    <div class="team-number">
+                        01
+                    </div>
+
+                    <div class="team-person">
+                        Pramod Jadhav
+                    </div>
+
+                    <div class="team-role">
+                        TEAM MEMBER
+                    </div>
+
+                </div>
+
+
+                <div class="team-name reveal">
+
+                    <div class="team-number">
+                        02
+                    </div>
+
+                    <div class="team-person">
+                        Akash Jadhav
+                    </div>
+
+                    <div class="team-role">
+                        TEAM MEMBER
+                    </div>
+
+                </div>
+
+
+                <div class="team-name reveal">
+
+                    <div class="team-number">
+                        03
+                    </div>
+
+                    <div class="team-person">
+                        Arjun Chavan
+                    </div>
+
+                    <div class="team-role">
+                        TEAM MEMBER
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         CONTACT
+    ================================================== -->
+
+    <section
+        class="section contact"
+        id="contact"
+    >
+
+        <div class="container">
+
+            <div class="contact-grid">
+
+                <div>
+
+                    <div class="eyebrow light-text">
+                        05 / LET'S BUILD
+                    </div>
+
+
+                    <h2 class="contact-title">
+
+                        Start
+                        <em>
+                            Something
+                        </em>
+
+                        Strong.
+
+                    </h2>
+
+
+                    <p class="contact-copy">
+
+                        Have a structural repair, guniting,
+                        rehabilitation or civil engineering
+                        requirement?
+
+                        <br><br>
+
+                        Connect with GCGW and let's discuss
+                        your project.
+
+                    </p>
+
+
+                    <a
+                        href="tel:+919999999999"
+                        class="luxury-button magnetic"
+                    >
+                        CALL GCGW
+                        <span>↗</span>
+                    </a>
+
+                </div>
+
+
+                <div class="contact-details">
+
+                    <div class="contact-item">
+
+                        <small>
+                            PHONE
+                        </small>
+
+                        <strong>
+                            +91 9398577232
+                            +91 6354867785
+                        </strong>
+
+                    </div>
+
+
+                    <div class="contact-item">
+
+                        <small>
+                            EMAIL
+                        </small>
+
+                        <strong>
+                            gnchavan75@gmail.com
+                        </strong>
+
+                    </div>
+
+
+                    <div class="contact-item">
+
+                        <small>
+                            LOCATION
+                        </small>
+
+                        <strong>
+                            India
+                        </strong>
+
+                    </div>
+
+
+                    <div class="contact-item">
+
+                        <small>
+                            BUSINESS
+                        </small>
+
+                        <strong>
+                            Gopal Chavan Guniting Work
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+====================================================== -->
+
+<footer>
+
+    <div class="footer-top">
+
+
+        <!-- BRAND -->
+
+        <div class="footer-brand">
+
+            <img
+                src="logo1.jpeg"
+                alt="GCGW Logo"
+                class="footer-logo"
+            >
+
+            <h3>
+                GOPAL CHAVAN
+                <br>
+                GUNITING WORK
+            </h3>
+
+            <p>
+
+                Strengthening structures.
+                Building trust.
+
+                <br><br>
+
+                GCGW — Guniting, structural repairs,
+                concrete rehabilitation and civil
+                engineering solutions.
+
+            </p>
+
+        </div>
+
+
+        <!-- COMPANY -->
+
+        <div class="footer-column">
+
+            <h4>
+                COMPANY
+            </h4>
+
+            <a href="#about">
+                About Us
+            </a>
+
+            <a href="#services">
+                Services
+            </a>
+
+            <a href="#projects">
+                Projects
+            </a>
+
+            <a href="#team">
+                Leadership
+            </a>
+
+        </div>
+
+
+        <!-- SOCIALS -->
+
+        <div class="footer-column">
+
+            <h4>
+                SOCIALS
+            </h4>
+
+            <a
+                href="#"
+                target="_blank"
+            >
+                Instagram ↗
+            </a>
+
+            <a
+                href="#"
+                target="_blank"
+            >
+                Facebook ↗
+            </a>
+
+            <a
+                href="#"
+                target="_blank"
+            >
+                LinkedIn ↗
+            </a>
+
+            <a
+                href="#contact"
+            >
+                WhatsApp ↗
+            </a>
+
+        </div>
+
+
+        <!-- LEGAL -->
+
+        <div class="footer-column">
+
+            <h4>
+                LEGAL
+            </h4>
+
+            <a href="#">
+                Privacy Policy
+            </a>
+
+            <a href="#">
+                Terms
+            </a>
+
+            <a href="#">
+                Legal
+            </a>
+
+            <a href="#contact">
+                Contact
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+        <div>
+            © 2026 GCGW. ALL RIGHTS RESERVED.
+        </div>
+
+        <div>
+            GOPAL CHAVAN GUNITING WORK —
+            <strong>
+                INDIA
+            </strong>
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+====================================================== -->
+
+<script>
+
+    /* =====================================================
+       GSAP
+    ====================================================== */
+
+    gsap.registerPlugin(ScrollTrigger);
+
+
+    /* =====================================================
+       LOADER
+    ====================================================== */
+
+    const loader =
+        document.querySelector("#loader");
+
+    const loaderLogo =
+        document.querySelector(".loader-logo");
+
+    const loaderLine =
+        document.querySelector(".loader-line");
+
+    const loaderName =
+        document.querySelector(".loader-name");
+
+    const loaderEst =
+        document.querySelector(".loader-est");
+
+    const introMark =
+        document.querySelector(".intro-mark");
+
+    const navBrand =
+        document.querySelector(".nav-brand");
+
+    const heroKicker =
+        document.querySelector(".hero-kicker");
+
+    const heroTitle =
+        document.querySelector(".hero-title");
+
+    const heroDescription =
+        document.querySelector(".hero-description");
+
+    const heroActions =
+        document.querySelector(".hero-actions");
+
+
+    const introTimeline =
+        gsap.timeline();
+
+
+    introTimeline
+
+        .to(
+            loaderLogo,
+            {
+                opacity: 1,
+                scale: 1,
+                duration: 1.2,
+                ease: "power4.out"
+            }
+        )
+
+        .to(
+            loaderLine,
+            {
+                width: 170,
+                duration: .8,
+                ease: "power3.inOut"
+            },
+            "-=.4"
+        )
+
+        .to(
+            loaderName,
+            {
+                opacity: 1,
+                y: 0,
+                duration: .6
+            }
+        )
+
+        .to(
+            loaderEst,
+            {
+                opacity: 1,
+                duration: .5
+            }
+        )
+
+        .to(
+            {},
+            {
+                duration: .5
+            }
+        )
+
+        .to(
+            loader,
+            {
+                opacity: 0,
+                duration: .8,
+                ease: "power3.inOut"
+            }
+        )
+
+        .set(
+            loader,
+            {
+                display: "none"
+            }
+        )
+
+        .set(
+            introMark,
+            {
+                opacity: 1
+            }
+        )
+
+        .fromTo(
+            introMark,
+            {
+                scale: .65,
+                xPercent: -50,
+                yPercent: -50
+            },
+            {
+                scale: 1,
+                duration: 1,
+                ease: "power4.out"
+            }
+        )
+
+        .to(
+            introMark,
+            {
+                left: "5vw",
+                top: "44px",
+                xPercent: 0,
+                yPercent: -50,
+                scale: .38,
+                duration: 1.5,
+                ease: "power4.inOut"
+            }
+        )
+
+        .to(
+            introMark,
+            {
+                opacity: 0,
+                duration: .5
+            }
+        )
+
+        .to(
+            navBrand,
+            {
+                opacity: 1,
+                x: 0,
+                duration: .7,
+                ease: "power3.out"
+            },
+            "-=.2"
+        )
+
+        .to(
+            heroKicker,
+            {
+                opacity: 1,
+                y: 0,
+                duration: .7,
+                ease: "power3.out"
+            }
+        )
+
+        .to(
+            heroTitle,
+            {
+                opacity: 1,
+                y: 0,
+                duration: 1.2,
+                ease: "power4.out"
+            },
+            "-=.35"
+        )
+
+        .to(
+            heroDescription,
+            {
+                opacity: 1,
+                y: 0,
+                duration: .8,
+                ease: "power3.out"
+            },
+            "-=.65"
+        )
+
+        .to(
+            heroActions,
+            {
+                opacity: 1,
+                y: 0,
+                duration: .7,
+                ease: "power3.out"
+            },
+            "-=.5"
+        )
+
+        .to(
+            ".hero-image img",
+            {
+                scale: 1,
+                duration: 2,
+                ease: "power3.out"
+            },
+            "-=1"
+        )
+
+        .to(
+            {},
+            {
+                duration: .1,
+                onComplete: () => {
+
+                    document.body
+                        .classList
+                        .remove("no-scroll");
+
+                }
+            }
+        );
+
+
+    /* =====================================================
+       NAV SCROLL
+    ====================================================== */
+
+    const nav =
+        document.querySelector(".nav");
+
+
+    window.addEventListener(
+        "scroll",
+        function() {
+
+            if(window.scrollY > 60) {
+
+                nav.classList.add("scrolled");
+
+            } else {
+
+                nav.classList.remove("scrolled");
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       CURSOR
+    ====================================================== */
+
+    const cursor =
+        document.querySelector(".cursor-glow");
+
+
+    if(
+        window.matchMedia(
+            "(pointer:fine)"
+        ).matches
+    ) {
+
+        window.addEventListener(
+            "mousemove",
+            function(e) {
+
+                gsap.to(
+                    cursor,
+                    {
+                        x: e.clientX,
+                        y: e.clientY,
+                        opacity: 1,
+                        duration: .6,
+                        ease: "power3.out"
+                    }
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       REVEAL ANIMATIONS
+    ====================================================== */
+
+    gsap.utils
+        .toArray(".reveal")
+        .forEach(
+            function(element) {
+
+                gsap.to(
+                    element,
+                    {
+
+                        opacity: 1,
+
+                        y: 0,
+
+                        duration: 1,
+
+                        ease:
+                            "power4.out",
+
+                        scrollTrigger: {
+
+                            trigger:
+                                element,
+
+                            start:
+                                "top 84%",
+
+                            once:
+                                true
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+    gsap.utils
+        .toArray(".reveal-left")
+        .forEach(
+            function(element) {
+
+                gsap.to(
+                    element,
+                    {
+
+                        opacity: 1,
+
+                        x: 0,
+
+                        duration: 1.1,
+
+                        ease:
+                            "power4.out",
+
+                        scrollTrigger: {
+
+                            trigger:
+                                element,
+
+                            start:
+                                "top 84%",
+
+                            once:
+                                true
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+    gsap.utils
+        .toArray(".reveal-right")
+        .forEach(
+            function(element) {
+
+                gsap.to(
+                    element,
+                    {
+
+                        opacity: 1,
+
+                        x: 0,
+
+                        duration: 1.1,
+
+                        ease:
+                            "power4.out",
+
+                        scrollTrigger: {
+
+                            trigger:
+                                element,
+
+                            start:
+                                "top 84%",
+
+                            once:
+                                true
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       COUNTERS
+    ====================================================== */
+
+    gsap.utils
+        .toArray(".stat-number")
+        .forEach(
+            function(counter) {
+
+                const target =
+                    Number(
+                        counter.dataset.count
+                    );
+
+                const obj = {
+                    value: 0
+                };
+
+
+                gsap.to(
+                    obj,
+                    {
+
+                        value:
+                            target,
+
+                        duration:
+                            2,
+
+                        ease:
+                            "power2.out",
+
+                        scrollTrigger: {
+
+                            trigger:
+                                counter,
+
+                            start:
+                                "top 90%",
+
+                            once:
+                                true
+
+                        },
+
+                        onUpdate:
+                            function() {
+
+                                counter.innerHTML =
+                                    Math.floor(
+                                        obj.value
+                                    ) +
+                                    (
+                                        target === 1
+                                        ? "×"
+                                        : "+"
+                                    );
+
+                            }
+
+                    }
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       HERO PARALLAX
+    ====================================================== */
+
+    gsap.to(
+        ".hero-image img",
+        {
+
+            yPercent:
+                15,
+
+            ease:
+                "none",
+
+            scrollTrigger: {
+
+                trigger:
+                    ".hero",
+
+                start:
+                    "top top",
+
+                end:
+                    "bottom top",
+
+                scrub:
+                    true
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       PROJECT IMAGE PARALLAX
+    ====================================================== */
+
+    gsap.utils
+        .toArray(".project-image img")
+        .forEach(
+            function(image) {
+
+                gsap.fromTo(
+                    image,
+
+                    {
+                        yPercent:
+                            -5
+
+                    },
+
+                    {
+
+                        yPercent:
+                            8,
+
+                        ease:
+                            "none",
+
+                        scrollTrigger: {
+
+                            trigger:
+                                image.parentElement,
+
+                            start:
+                                "top bottom",
+
+                            end:
+                                "bottom top",
+
+                            scrub:
+                                true
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       LEADER FLOAT
+    ====================================================== */
+
+    gsap.utils
+        .toArray(".leader-card")
+        .forEach(
+            function(card,index) {
+
+                gsap.fromTo(
+                    card,
+
+                    {
+
+                        opacity:
+                            0,
+
+                        y:
+                            100,
+
+                        rotateY:
+                            index === 0
+                            ? -10
+                            : 10
+
+                    },
+
+                    {
+
+                        opacity:
+                            1,
+
+                        y:
+                            0,
+
+                        rotateY:
+                            0,
+
+                        duration:
+                            1.3,
+
+                        ease:
+                            "power4.out",
+
+                        scrollTrigger: {
+
+                            trigger:
+                                card,
+
+                            start:
+                                "top 80%",
+
+                            once:
+                                true
+
+                        }
+
+                    }
+
+                );
+
+
+                gsap.to(
+                    card,
+                    {
+
+                        y:
+                            index === 0
+                            ? -10
+                            : -14,
+
+                        duration:
+                            3.5 + index,
+
+                        repeat:
+                            -1,
+
+                        yoyo:
+                            true,
+
+                        ease:
+                            "sine.inOut",
+
+                        delay:
+                            .8 + index * .2
+
+                    }
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       LEADER TILT
+    ====================================================== */
+
+    if(
+        window.matchMedia(
+            "(pointer:fine)"
+        ).matches
+    ) {
+
+        document
+            .querySelectorAll(
+                ".leader-card"
+            )
+            .forEach(
+                function(card) {
+
+                    card.addEventListener(
+                        "mousemove",
+                        function(e) {
+
+                            const rect =
+                                card.getBoundingClientRect();
+
+                            const x =
+                                e.clientX -
+                                rect.left;
+
+                            const y =
+                                e.clientY -
+                                rect.top;
+
+                            const rotateY =
+                                ((x / rect.width) - .5)
+                                * 8;
+
+                            const rotateX =
+                                ((y / rect.height) - .5)
+                                * -8;
+
+
+                            gsap.to(
+                                card,
+                                {
+
+                                    rotateX:
+                                        rotateX,
+
+                                    rotateY:
+                                        rotateY,
+
+                                    duration:
+                                        .5,
+
+                                    ease:
+                                        "power2.out"
+
+                                }
+                            );
+
+                        }
+                    );
+
+
+                    card.addEventListener(
+                        "mouseleave",
+                        function() {
+
+                            gsap.to(
+                                card,
+                                {
+
+                                    rotateX:
+                                        0,
+
+                                    rotateY:
+                                        0,
+
+                                    duration:
+                                        .7,
+
+                                    ease:
+                                        "power3.out"
+
+                                }
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+    }
+
+
+    /* =====================================================
+       MAGNETIC BUTTONS
+    ====================================================== */
+
+    if(
+        window.matchMedia(
+            "(pointer:fine)"
+        ).matches
+    ) {
+
+        document
+            .querySelectorAll(
+                ".magnetic"
+            )
+            .forEach(
+                function(button) {
+
+                    button.addEventListener(
+                        "mousemove",
+                        function(e) {
+
+                            const rect =
+                                button.getBoundingClientRect();
+
+                            const x =
+                                e.clientX -
+                                rect.left -
+                                rect.width / 2;
+
+                            const y =
+                                e.clientY -
+                                rect.top -
+                                rect.height / 2;
+
+
+                            gsap.to(
+                                button,
+                                {
+
+                                    x:
+                                        x * .12,
+
+                                    y:
+                                        y * .12,
+
+                                    duration:
+                                        .4,
+
+                                    ease:
+                                        "power3.out"
+
+                                }
+                            );
+
+                        }
+                    );
+
+
+                    button.addEventListener(
+                        "mouseleave",
+                        function() {
+
+                            gsap.to(
+                                button,
+                                {
+
+                                    x: 0,
+
+                                    y: 0,
+
+                                    duration:
+                                        .6,
+
+                                    ease:
+                                        "elastic.out(1,.5)"
+
+                                }
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+    }
+
+
+    /* =====================================================
+       SERVICE STAGGER
+    ====================================================== */
+
+    gsap.fromTo(
+        ".service",
+        {
+            x: -50,
+            opacity: 0
+        },
+        {
+            x: 0,
+            opacity: 1,
+            duration: 1,
+            stagger: .12,
+            ease: "power4.out",
+            overwrite: "auto",
+            clearProps: "transform,opacity",
+            scrollTrigger: {
+                trigger: ".service-list",
+                start: "top 80%",
+                once: true,
+                invalidateOnRefresh: true
+            }
+        }
+    );
+
+
+    /* =====================================================
+       TEAM STAGGER
+    ====================================================== */
+
+    gsap.from(
+        ".team-name",
+        {
+
+            x:
+                -50,
+
+            opacity:
+                0,
+
+            duration:
+                .8,
+
+            stagger:
+                .15,
+
+            ease:
+                "power3.out",
+
+            scrollTrigger: {
+
+                trigger:
+                    ".remaining-team",
+
+                start:
+                    "top 80%",
+
+                once:
+                    true
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       PROJECT TITLE REVEAL
+    ====================================================== */
+
+    gsap.utils
+        .toArray(".project-title")
+        .forEach(
+            function(title) {
+
+                gsap.from(
+                    title,
+                    {
+
+                        y:
+                            70,
+
+                        opacity:
+                            0,
+
+                        duration:
+                            1,
+
+                        ease:
+                            "power4.out",
+
+                        scrollTrigger: {
+
+                            trigger:
+                                title,
+
+                            start:
+                                "top 82%",
+
+                            once:
+                                true
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       ACTIVE NAV
+    ====================================================== */
+
+    const sections =
+        document.querySelectorAll(
+            "section[id]"
+        );
+
+
+    const navAnchors =
+        document.querySelectorAll(
+            ".nav-links a"
+        );
+
+
+    window.addEventListener(
+        "scroll",
+        function() {
+
+            let current = "";
+
+            sections.forEach(
+                function(section) {
+
+                    const sectionTop =
+                        section.offsetTop - 150;
+
+                    if(
+                        window.scrollY >=
+                        sectionTop
+                    ) {
+
+                        current =
+                            section.getAttribute(
+                                "id"
+                            );
+
+                    }
+
+                }
+            );
+
+
+            navAnchors.forEach(
+                function(link) {
+
+                    link.style.color = "";
+
+                    if(
+                        link.getAttribute(
+                            "href"
+                        ) ===
+                        "#" + current
+                    ) {
+
+                        link.style.color =
+                            "var(--accent)";
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       REFRESH SCROLLTRIGGER
+    ====================================================== */
+
+    window.addEventListener(
+        "load",
+        function() {
+
+            ScrollTrigger.refresh();
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>
