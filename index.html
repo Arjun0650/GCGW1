@@ -3444,7 +3444,9 @@
 
         }
 
-    </style>
+    
+.location-table{width:100%;border-collapse:collapse;margin-top:32px}.location-table th,.location-table td{text-align:left;padding:18px 10px;border-bottom:1px solid var(--line-light);font-size:15px}.location-table th{color:var(--accent)}.avatar-placeholder{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:16px;background:var(--steel-blue);color:var(--architectural-white);padding:20px;text-align:center}.avatar-placeholder small{color:var(--muted-steel)}.whatsapp-contact{display:inline-block;margin-top:20px;color:var(--accent)}.team-role{overflow-wrap:anywhere} @media(max-width:600px){.location-table th,.location-table td{font-size:13px;padding:14px 6px}}
+</style>
 
 </head>
 
@@ -4306,6 +4308,7 @@
     </section>
 
 
+<section class="section" id="project-list"><div class="container"><div class="eyebrow">PROJECT LOCATIONS</div><h2 class="section-title">Project <em>List.</em></h2><table class="location-table"><thead><tr><th>State</th><th>Location</th></tr></thead><tbody><tr><td>Maharashtra</td><td>Pune</td></tr><tr><td>Maharashtra</td><td>Mumbai</td></tr><tr><td>Maharashtra</td><td>Navi Mumbai</td></tr><tr><td>Telangana</td><td>Jubilee Hills, Hyderabad</td></tr><tr><td>Karnataka</td><td>Mangalore</td></tr><tr><td>Karnataka</td><td>Bangalore</td></tr><tr><td>Odisha</td><td>Jagannath Temple</td></tr><tr><td>Odisha</td><td>Site 2</td></tr><tr><td>Chhattisgarh</td><td>Site 1</td></tr><tr><td>Madhya Pradesh</td><td>Indore 1</td></tr><tr><td>Madhya Pradesh</td><td>Indore 2</td></tr></tbody></table></div></section>
     <!-- =================================================
          LEADERSHIP
     ================================================== -->
@@ -4357,11 +4360,7 @@
 
                     <div class="leader-image-wrap">
 
-                        <img
-                            src="owner 1.jpeg"
-                            alt="Gopal Chavan"
-                            class="leader-image"
-                        >
+                        <div class="avatar-placeholder" role="img" aria-label="Standing avatar for Gopal Chavan pending original photo"><span>Gopal Chavan</span><small>Standing avatar coming soon</small></div>
 
                     </div>
 
@@ -4391,11 +4390,7 @@
 
                     <div class="leader-image-wrap">
 
-                        <img
-                            src="owner 2.jpeg"
-                            alt="Kevil Jadhav"
-                            class="leader-image"
-                        >
+                        <div class="avatar-placeholder" role="img" aria-label="Standing avatar for Kevil Jadhav pending original photo"><span>Kevil Jadhav</span><small>Standing avatar coming soon</small></div>
 
                     </div>
 
@@ -4441,7 +4436,7 @@
                     </div>
 
                     <div class="team-role">
-                        TEAM MEMBER
+                        Site Operations
                     </div>
 
                 </div>
@@ -4458,7 +4453,7 @@
                     </div>
 
                     <div class="team-role">
-                        TEAM MEMBER
+                        Site Operations
                     </div>
 
                 </div>
@@ -4475,11 +4470,12 @@
                     </div>
 
                     <div class="team-role">
-                        TEAM MEMBER
+                        Technical Support &amp; Quotations
                     </div>
 
                 </div>
 
+<div class="team-name reveal"><div class="team-number">04</div><div class="team-person">Vital Chavan</div><div class="team-role">Engineer</div></div>
             </div>
 
         </div>
@@ -4534,7 +4530,7 @@
 
 
                     <a
-                        href="tel:+919999999999"
+                        href="tel:+919398577232"
                         class="luxury-button magnetic"
                     >
                         CALL GCGW
@@ -4544,7 +4540,7 @@
                 </div>
 
 
-                <div class="contact-details">
+                <div class="contact-details"><a class="whatsapp-contact" href="#contact" data-whatsapp>WhatsApp ↗</a><p id="whatsapp-status" role="status" style="margin-top:12px"></p>
 
                     <div class="contact-item">
 
@@ -4553,8 +4549,8 @@
                         </small>
 
                         <strong>
-                            +91 9398577232
-                            +91 6354867785
+                            <a href="tel:+919398577232">+91 9398577232</a><br>
+                            <a href="tel:+916354867785">+91 6354867785</a>
                         </strong>
 
                     </div>
@@ -4686,31 +4682,17 @@
             </h4>
 
             <a
-                href="#"
+                href="https://www.instagram.com/gc__constructions/" rel="noopener noreferrer"
                 target="_blank"
             >
                 Instagram ↗
             </a>
 
-            <a
-                href="#"
-                target="_blank"
-            >
-                Facebook ↗
-            </a>
+            
 
-            <a
-                href="#"
-                target="_blank"
-            >
-                LinkedIn ↗
-            </a>
+            
 
-            <a
-                href="#contact"
-            >
-                WhatsApp ↗
-            </a>
+            <a href="#contact" data-whatsapp>WhatsApp ↗</a>
 
         </div>
 
@@ -5232,7 +5214,7 @@
                                         obj.value
                                     ) +
                                     (
-                                        target === 1
+                                        target === 10 && counter.closest(".stat").querySelector(".stat-label").textContent.includes("Commitment")
                                         ? "×"
                                         : "+"
                                     );
@@ -5803,6 +5785,28 @@
 </script>
 
 
+
+<script>
+// Complete these two settings when the business WhatsApp details are supplied.
+const WHATSAPP_NUMBER = ""; // Country code and digits only.
+const WHATSAPP_MESSAGE = ""; // Client reviews this message and presses Send.
+document.querySelectorAll('[data-whatsapp]').forEach(link => {
+  if (WHATSAPP_NUMBER && WHATSAPP_MESSAGE) {
+    link.href = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(WHATSAPP_MESSAGE);
+    link.target = '_blank'; link.rel = 'noopener noreferrer';
+  } else {
+    link.addEventListener('click', () => {
+      document.getElementById('whatsapp-status').textContent = 'WhatsApp enquiries are coming soon. Please call either number below.';
+    });
+  }
+});
+// Keep content accessible if the animation library cannot load.
+if (!window.gsap) {
+  document.body.classList.remove('no-scroll');
+  document.getElementById('loader').style.display='none';
+  document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.nav-brand,.hero-kicker,.hero-title,.hero-description,.hero-actions,.hero-scroll,.loader-logo').forEach(el=>{el.style.opacity='1';el.style.transform='none';});
+}
+</script>
 </body>
 
 </html>
