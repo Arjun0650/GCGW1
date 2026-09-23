@@ -1,0 +1,29 @@
+.nav-contact {
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: .88rem;
+  font-weight: 600;
+  padding: 0;
+}
+
+.nav-contact:hover { color: var(--orange); }
+
+.contact-dialog { width: min(500px, calc(100% - 32px)); }
+
+.contact-options { display: grid; gap: 12px; margin-top: 24px; }
+
+.contact-option {
+  display: grid;
+  gap: 3px;
+  border: 1px solid var(--line);
+  padding: 18px 20px;
+  border-radius: 4px;
+  transition: transform .18s ease, border-color .18s ease;
+}
+
+.contact-option:hover { transform: translateY(-2px); border-color: var(--orange); }
+.contact-option strong { font-size: 1.08rem; }
+.contact-option span { color: var(--slate); font-size: .9rem; }
+.whatsapp-option { background: #eff8f1; border-color: #b7ddbd; }

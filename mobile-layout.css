@@ -1,0 +1,61 @@
+@media (max-width: 760px) {
+  .site-header {
+    height: 78px;
+    padding: 0 18px;
+  }
+
+  .menu-button {
+    border-radius: 0;
+    padding: 10px 12px;
+  }
+
+  nav {
+    top: 78px;
+    gap: 0;
+    padding: 10px 18px 18px;
+  }
+
+  nav a, .nav-contact, nav .login-button {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+  }
+
+  nav .login-button {
+    justify-content: center;
+    border: 1px solid var(--ink);
+    margin-top: 12px;
+  }
+
+  .hero-copy {
+    padding: 68px 24px 52px;
+  }
+
+  .hero h1 {
+    font-size: clamp(3.25rem, 15vw, 4.35rem);
+    line-height: 1.02;
+  }
+
+  .hero-copy .lead { font-size: 1.04rem; }
+  .hero-visual { min-height: 390px; }
+  .actions { align-items: stretch; flex-direction: column; gap: 10px; }
+  .actions .button { text-align: center; width: 100%; }
+  .actions .text { padding: 12px 0; }
+  .hero-note { margin-top: 34px; }
+
+  .section { padding: 72px 24px; }
+  .section h2 { font-size: clamp(2.55rem, 12vw, 3.5rem); }
+  .check-list { grid-template-columns: 1fr; }
+  .services article { padding: 28px 0; }
+  .services h3 { margin: 8px 0; }
+
+  .projects-grid { margin-top: 34px; }
+  .project-card img, .image-placeholder { height: 250px; }
+  .team-grid { grid-template-columns: 1fr; }
+  .contact { padding: 74px 24px; }
+  .contact h2 { font-size: clamp(2.65rem, 12vw, 3.6rem); }
+  footer { padding: 24px; }
+
+  .contact-dialog, .admin-dialog { width: calc(100% - 20px); padding: 28px 20px; }
+}
