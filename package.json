@@ -1,1 +1,1 @@
-{"name":"gcgw-professional-site","private":true,"type":"module"}
+{"name":"gcgw-professional-site","private":true,"type":"module","dependencies":{"@supabase/supabase-js":"^2.57.4"}}
