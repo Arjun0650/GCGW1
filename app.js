@@ -1,12 +1,13 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
 // Public values are safe in the browser. Add these in Netlify environment variables too.
 const config = window.GCGW_CONFIG || { supabaseUrl: '', supabaseAnonKey: '' };
-const supabase = config.supabaseUrl && config.supabaseAnonKey ? createClient(config.supabaseUrl, config.supabaseAnonKey) : null;
+const supabase = config.supabaseUrl && config.supabaseAnonKey && window.supabase ? window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey) : null;
 const fallback = { projects:[
-  {id:'1',title:'Structural Strengthening',description:'Specialised work focused on durability, integrity and long-term performance.',category:'Guniting',location:'India',image_url:'img 10.jpeg'},
-  {id:'2',title:'Concrete Rehabilitation',description:'Restoration of damaged concrete surfaces to extend structural service life.',category:'Concrete repair',location:'India',image_url:'img 12.jpeg'},
-  {id:'3',title:'Precision Execution',description:'Disciplined site execution supported by experienced teams.',category:'Civil work',location:'India',image_url:'img 13.jpeg'}],
+  {id:'1',title:'Excavation & Site Works',description:'Planned execution for demanding active construction environments.',category:'Civil work',location:'India',image_url:'img1.jpeg'},
+  {id:'2',title:'Structural Repair Works',description:'Practical repairs focused on restoring safety, strength and service life.',category:'Structural repair',location:'India',image_url:'img2.jpg'},
+  {id:'3',title:'Concrete Rehabilitation',description:'Restoration and protection of deteriorated concrete elements.',category:'Concrete repair',location:'India',image_url:'img3.jpg'},
+  {id:'4',title:'Guniting Application',description:'Controlled application work for strengthening and surface rehabilitation.',category:'Guniting',location:'India',image_url:'img4.jpg'},
+  {id:'5',title:'Specialised Civil Work',description:'Reliable site execution with close attention to quality and coordination.',category:'Civil work',location:'India',image_url:'img5.jpg'},
+  {id:'6',title:'Repair & Protection',description:'Focused work to improve performance and extend structural life.',category:'Rehabilitation',location:'India',image_url:'img6.jpg'}],
   team:[{id:'1',name:'Gopal Chavan',role:'CEO',photo_url:'owner 1.jpeg'},{id:'2',name:'Kevil Jadhav',role:'Co-Founder',photo_url:'owner 2.jpeg'},{id:'3',name:'Pramod Jadhav',role:'Site Operations'},{id:'4',name:'Akash Jadhav',role:'Site Operations'},{id:'5',name:'Arjun Chavan',role:'Technical Support & Quotations'},{id:'6',name:'Vital Chavan',role:'Engineer'}] };
 let data = structuredClone(fallback), activeType='project';
 const $=s=>document.querySelector(s); const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
