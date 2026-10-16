@@ -2,17 +2,21 @@
 const config = window.GCGW_CONFIG || { supabaseUrl: '', supabaseAnonKey: '' };
 const supabase = config.supabaseUrl && config.supabaseAnonKey && window.supabase ? window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey) : null;
 const fallback = { projects:[
-  {id:'1',title:'Excavation & Site Works',description:'Planned execution for demanding active construction environments.',category:'Civil work',location:'India',image_url:'img1.jpeg'},
-  {id:'2',title:'Structural Repair Works',description:'Practical repairs focused on restoring safety, strength and service life.',category:'Structural repair',location:'India',image_url:'img2.jpg'},
-  {id:'3',title:'Concrete Rehabilitation',description:'Restoration and protection of deteriorated concrete elements.',category:'Concrete repair',location:'India',image_url:'img3.jpg'},
-  {id:'4',title:'Guniting Application',description:'Controlled application work for strengthening and surface rehabilitation.',category:'Guniting',location:'India',image_url:'img4.jpg'},
-  {id:'5',title:'Specialised Civil Work',description:'Reliable site execution with close attention to quality and coordination.',category:'Civil work',location:'India',image_url:'img5.jpg'},
-  {id:'6',title:'Repair & Protection',description:'Focused work to improve performance and extend structural life.',category:'Rehabilitation',location:'India',image_url:'img6.jpg'}],
+  {id:'1',title:'Telangana',description:'GCGW project location.',category:'Project location',location:'Telangana'},
+  {id:'2',title:'Karnataka',description:'GCGW project location.',category:'Project location',location:'Karnataka'},
+  {id:'3',title:'Pune 1',description:'GCGW project location.',category:'Project location',location:'Pune'},
+  {id:'4',title:'Mumbai 1',description:'GCGW project location.',category:'Project location',location:'Mumbai'},
+  {id:'5',title:'Mumbai 2',description:'GCGW project location.',category:'Project location',location:'Mumbai'},
+  {id:'6',title:'Navi Mumbai',description:'GCGW project location.',category:'Project location',location:'Navi Mumbai'},
+  {id:'7',title:'Pune 2',description:'GCGW project location.',category:'Project location',location:'Pune'},
+  {id:'8',title:'Andhra Pradesh',description:'GCGW project location.',category:'Project location',location:'Andhra Pradesh'},
+  {id:'9',title:'Odisha 1',description:'GCGW project location.',category:'Project location',location:'Odisha'},
+  {id:'10',title:'Odisha 2',description:'GCGW project location.',category:'Project location',location:'Odisha'}],
   team:[{id:'1',name:'Gopal Chavan',role:'CEO'},{id:'2',name:'Kevil Jadhav',role:'Co-Founder'},{id:'3',name:'Pramod Jadhav',role:'Site Operations'},{id:'4',name:'Akash Jadhav',role:'Site Operations'},{id:'5',name:'Arjun Chavan',role:'Technical Support & Quotations'},{id:'6',name:'Vital Chavan',role:'Engineer'}] };
 let data = structuredClone(fallback), activeType='project';
 const $=s=>document.querySelector(s); const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 async function api(path, options={}) { const session=(await supabase?.auth.getSession())?.data?.session; const r=await fetch(`/.netlify/functions/${path}`,{...options,headers:{'Content-Type':'application/json',...(session?{Authorization:`Bearer ${session.access_token}`}:{})}}); if(!r.ok) throw new Error((await r.json().catch(()=>({}))).error||'Request failed'); return r.json(); }
-function draw(){ $('#projects-grid').innerHTML=data.projects.length?data.projects.map(p=>`<article class="project-card">${p.image_url?`<img src="${esc(p.image_url)}" alt="${esc(p.title)}">`:'<div class="image-placeholder"></div>'}<div class="project-body"><span class="project-meta">${esc(p.category||'Project')} · ${esc(p.location||'India')}</span><h3>${esc(p.title)}</h3><p>${esc(p.description)}</p></div></article>`).join(''):'<p class="loading">Projects will be added soon.</p>'; $('#team-grid').innerHTML=data.team.length?data.team.map(t=>`<article class="team-card"><div><h3>${esc(t.name)}</h3><p>${esc(t.role)}</p></div></article>`).join(''):'<p class="loading">Team information will be added soon.</p>'; }
+function draw(){ $('#projects-grid').innerHTML=data.projects.length?data.projects.map(p=>`<article class="project-card"><div class="project-body"><span class="project-meta">${esc(p.category||'Project')} · ${esc(p.location||'India')}</span><h3>${esc(p.title)}</h3><p>${esc(p.description)}</p></div></article>`).join(''):'<p class="loading">Projects will be added soon.</p>'; $('#team-grid').innerHTML=data.team.length?data.team.map(t=>`<article class="team-card"><div><h3>${esc(t.name)}</h3><p>${esc(t.role)}</p></div></article>`).join(''):'<p class="loading">Team information will be added soon.</p>'; }
 async function load(){ draw(); try{const r=await api('content');data={projects:r.projects?.length?r.projects:fallback.projects,team:r.team?.length?r.team:fallback.team};}catch{ } draw(); }
 function setMessage(m,err=false){const el=$('#auth-message');el.textContent=m;el.style.color=err?'#b42318':''}
 $('.menu-button').onclick=()=>{const n=$('nav');n.classList.toggle('open');$('.menu-button').setAttribute('aria-expanded',n.classList.contains('open'))}; document.querySelectorAll('nav a').forEach(a=>a.onclick=()=>$('nav').classList.remove('open'));
