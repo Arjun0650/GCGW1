@@ -13,7 +13,7 @@ const projectLocations = ['Andhra Pradesh', 'Karnataka', 'Mumbai', 'Navi Mumbai'
 function message(id, text = '', error = false) { const element = $(id); element.textContent = text; element.classList.toggle('error', error); }
 function localTable(collection) { return collection === 'projects' ? 'projects' : collection === 'media' ? 'project_media' : collection === 'team' ? 'team_members' : null; }
 async function fileApi(path, options = {}) {
-  const [collection, id] = path.split('/');
+  const [collection, id] = (path.startsWith('content/') ? path.slice('content/'.length) : path).split('/');
   if (path === 'admin-check') {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) throw new Error('Sign in is required.');
@@ -33,6 +33,18 @@ async function fileApi(path, options = {}) {
   const table = localTable(collection);
   if (!table) throw new Error('Request not found.');
   const values = options.body ? JSON.parse(options.body) : {};
+  if (table === 'project_media' && /^location-\d+$/.test(String(values.project_id || ''))) {
+    const location = projectLocations[Number(String(values.project_id).replace('location-', ''))];
+    if (!location) throw new Error('Choose a valid project location.');
+    let { data: project, error } = await supabase.from('projects').select('id').eq('location', location).maybeSingle();
+    if (error) throw error;
+    if (!project) {
+      const created = await supabase.from('projects').insert({ title: location, location, description: '', category: 'Project location' }).select('id').single();
+      if (created.error) throw created.error;
+      project = created.data;
+    }
+    values.project_id = project.id;
+  }
   let result;
   if (options.method === 'POST') result = await supabase.from(table).insert(values).select().single();
   else if (options.method === 'PUT' && id) result = await supabase.from(table).update(values).eq('id', id).select().single();
