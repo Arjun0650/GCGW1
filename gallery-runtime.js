@@ -3,6 +3,7 @@
   let lockedScrollY = 0;
   let galleryMedia = [];
   let activeIndex = 0;
+  let returnTarget = null;
   const dialog = document.getElementById('gallery-dialog');
   const viewer = document.getElementById('gallery-viewer');
   const viewerMedia = document.getElementById('gallery-viewer-media');
@@ -24,6 +25,7 @@
     document.body.style.top = '';
     document.body.style.width = '';
     window.scrollTo(0, lockedScrollY);
+    requestAnimationFrame(() => returnTarget?.scrollIntoView({ block: 'center', behavior: 'auto' }));
   };
   const closeViewer = () => {
     if (!viewer) return;
@@ -44,9 +46,10 @@
   const renderThumb = (item, index) => `<button type="button" class="gallery-thumb" data-gallery-media-index="${index}" aria-label="Open ${item.alt}">
     ${item.type === 'video' ? `<video preload="metadata" muted playsinline src="${item.src}" aria-hidden="true"></video><span class="gallery-play" aria-hidden="true">▶</span>` : `<img src="${item.src}" alt="${item.alt}" loading="lazy">`}
   </button>`;
-  const open = locationName => {
+  const open = (locationName, sourceCard = null) => {
     const key = slug(locationName), details = window.GCGW_GALLERY_MEDIA?.[key] || {};
     if (!dialog) return;
+    returnTarget = sourceCard;
     galleryMedia = [
       ...Array.from({ length: details.photos || 0 }, (_, index) => ({ type: 'image', src: `gallery/${key}/${key}-photo-${String(index + 1).padStart(2, '0')}.jpeg`, alt: `${locationName} project photo ${index + 1}` })),
       ...Array.from({ length: details.videos || 0 }, (_, index) => ({ type: 'video', src: `gallery/${key}/${key}-video-${String(index + 1).padStart(2, '0')}.mp4`, alt: `${locationName} project video ${index + 1}` }))
@@ -67,7 +70,7 @@
     if (!locationName) return;
     event.preventDefault();
     event.stopImmediatePropagation();
-    open(locationName);
+    open(locationName, card);
   });
   dialog?.addEventListener('close', () => { closeViewer(); unlockPage(); });
   dialog?.addEventListener('cancel', () => { closeViewer(); unlockPage(); });
