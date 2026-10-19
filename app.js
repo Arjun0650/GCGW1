@@ -13,9 +13,32 @@ function normaliseLocations(projects, media) { const byName = new Map(), idMap =
 function bundledMedia(projects) { return projects.flatMap(project => { const key = slug(locationName(project)), details = galleryCatalog[key] || {}, folder = `gallery/${key}`; const photos = Array.from({ length: details.photos || 0 }, (_, index) => ({ id: `${key}-photo-${index + 1}`, project_id: project.id, media_url: `${folder}/${key}-photo-${String(index + 1).padStart(2, '0')}.jpeg`, media_type: 'image', sort_order: index })); const videos = Array.from({ length: details.videos || 0 }, (_, index) => ({ id: `${key}-video-${index + 1}`, project_id: project.id, media_url: `${folder}/${key}-video-${String(index + 1).padStart(2, '0')}.mp4`, media_type: 'video', sort_order: 100 + index })); return [...photos, ...videos]; }); }
 const mediaFor = projectId => data.media.filter(item => String(item.project_id) === String(projectId)).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
 async function api(path, options = {}) { const session = (await supabase?.auth.getSession())?.data?.session; const response = await fetch(`/.netlify/functions/${path}`, { ...options, headers: { 'Content-Type': 'application/json', ...(session ? { Authorization: `Bearer ${session.access_token}` } : {}) } }); if (!response.ok) throw new Error((await response.json().catch(() => ({}))).error || 'Request failed'); return response.json(); }
+async function directContent() {
+  if (!supabase) throw new Error('Gallery connection is not configured.');
+  const [projectsResult, teamResult, mediaResult] = await Promise.all([
+    supabase.from('projects').select('*').order('title', { ascending: true }),
+    supabase.from('team_members').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false }),
+    supabase.from('project_media').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false })
+  ]);
+  const error = projectsResult.error || teamResult.error || mediaResult.error;
+  if (error) throw error;
+  return { projects: projectsResult.data || [], team: teamResult.data || [], media: mediaResult.data || [] };
+}
 function card(project) { const title = locationName(project), cover = project.image_url || galleryCatalog[slug(title)]?.cover || ''; const image = cover ? `<button class="location-cover" type="button" data-gallery="${esc(project.id)}" aria-label="Open ${esc(title)} gallery"><img src="${esc(cover)}" alt="${esc(title)} project location" loading="lazy"></button>` : '<div class="location-image-placeholder" aria-hidden="true"></div>'; return `<article class="project-card location-card">${image}<div class="project-body"><span class="project-meta">Project location</span><h3>${esc(title)}</h3><button class="view-gallery" type="button" data-gallery="${esc(project.id)}">View gallery <span aria-hidden="true">→</span></button></div></article>`; }
 function draw() { const projects = [...data.projects].sort((a, b) => locationName(a).localeCompare(locationName(b))); $('#projects-grid').innerHTML = projects.length ? projects.map(card).join('') : '<p class="loading">Project locations will be added soon.</p>'; $('#team-grid').innerHTML = data.team.length ? data.team.map(member => `<article class="team-card"><div><h3>${esc(member.name)}</h3></div></article>`).join('') : '<p class="loading">Team information will be added soon.</p>'; }
-async function load() { draw(); let content = {}; try { content = await api('content'); } catch {} const grouped = normaliseLocations(content.projects?.length ? content.projects : fallback.projects, content.media || []); data = { projects: grouped.projects, team: content.team?.length ? content.team : fallback.team, media: [...grouped.media, ...bundledMedia(grouped.projects)] }; draw(); }
+async function load() {
+  draw();
+  let content = {};
+  try {
+    content = await api('content');
+  } catch {
+    // Opening index.html directly has no Netlify server. Read the public gallery data from Supabase instead.
+    try { content = await directContent(); } catch {}
+  }
+  const grouped = normaliseLocations([...fallback.projects, ...(content.projects || [])], content.media || []);
+  data = { projects: grouped.projects, team: content.team?.length ? content.team : fallback.team, media: [...grouped.media, ...bundledMedia(grouped.projects)] };
+  draw();
+}
 function openDialog(dialog) { try { if (dialog.showModal) dialog.showModal(); else dialog.setAttribute('open', ''); } catch { dialog.setAttribute('open', ''); } }
 function closeDialog(dialog) { if (dialog.close) dialog.close(); else dialog.removeAttribute('open'); }
 function openGallery(id) { const project = data.projects.find(item => String(item.id) === String(id)); if (!project) return; const title = locationName(project); const items = mediaFor(id); $('#gallery-title').textContent = title; $('#gallery-intro').textContent = items.length ? `${items.length} photo${items.length === 1 ? '' : 's'} and video${items.some(item => item.media_type === 'video') ? 's' : ''} from our work in ${title}.` : `Photos and videos from our work in ${title} will be added here soon.`; $('#gallery-grid').innerHTML = items.length ? items.map(item => item.media_type === 'video' ? `<video controls preload="metadata" src="${esc(item.media_url)}" aria-label="${esc(item.alt_text || `${title} project video`)}"></video>` : `<img src="${esc(item.media_url)}" alt="${esc(item.alt_text || `${title} project photo`)}" loading="lazy">`).join('') : (project.image_url ? `<img src="${esc(project.image_url)}" alt="${esc(title)} project location">` : ''); openDialog($('#gallery-dialog')); }
