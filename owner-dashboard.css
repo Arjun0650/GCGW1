@@ -1,0 +1,9 @@
+.admin-dialog { width: min(920px, calc(100% - 24px)); }
+.admin-top .helper { max-width: 520px; margin: 10px 0 0; }
+.dashboard-message { min-height: 1.4em; margin: 14px 0 0; color: var(--slate); font-size: .9rem; }
+.dashboard-message.error { color: #b42318; }
+.upload-help { margin: 3px 0 0; color: var(--slate); font-size: .78rem; font-weight: 400; }
+.admin-item img { width: 52px; height: 42px; margin-right: 10px; object-fit: cover; vertical-align: middle; }
+.admin-item strong { vertical-align: middle; }
+.admin-item button { cursor: pointer; }
+@media (max-width: 560px) { .admin-tabs { gap: 12px; overflow-x: auto; } .admin-tabs button { font-size: .82rem; } }

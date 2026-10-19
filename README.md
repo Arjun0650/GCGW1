@@ -20,6 +20,12 @@ This is a calm, responsive public GCGW website with an owner-only content dashbo
 6. In Netlify → Site configuration → Environment variables, add `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`. Never add the service-role key to `index.html`, Git, or a client-side config file.
 7. Deploy this folder to Netlify. Netlify detects `netlify.toml`; run `npm install` during build so the functions receive `@supabase/supabase-js`.
 
+## Location galleries
+
+Locations are shown once, in alphabetical order. The owner dashboard has a **Locations** tab for each location's cover image and a **Gallery media** tab for its photo/video URLs and display order. Clicking **View gallery** opens that location's gallery on the homepage.
+
+For an already configured Supabase database, run `supabase-location-gallery-migration.sql` once in the Supabase SQL Editor before using Gallery media.
+
 ## Local test
 
 Install Node 18+ and the Netlify CLI, then run `npm install` followed by `netlify dev`. Test public viewing, owner sign-in, adding/editing/deleting both content types, and phone recovery with a real configured test number.
