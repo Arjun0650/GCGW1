@@ -65,7 +65,7 @@ html, body { overflow-x: hidden; }
   .contact { gap: 28px; padding: 66px var(--mobile-gutter); }
   .contact h2 { font-size: clamp(2.45rem, 11.5vw, 3.35rem); line-height: 1.02; }
   .contact-card { gap: 9px; padding: 24px 0 0; font-size: 1rem; overflow-wrap: anywhere; }
-  .contact-card a { min-height: 30px; display: block; }
+  .contact-card a { min-height: 30px; display: grid; }
   footer { padding: 22px var(--mobile-gutter) calc(22px + env(safe-area-inset-bottom)); gap: 10px; line-height: 1.45; }
 
   dialog, .contact-dialog, .admin-dialog { width: calc(100% - 24px); max-height: calc(100dvh - 24px); margin: auto; padding: 30px 20px; overflow-y: auto; }
