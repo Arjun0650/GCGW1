@@ -2,6 +2,14 @@ const config = window.GCGW_CONFIG || { supabaseUrl: '', supabaseAnonKey: '' };
 const supabase = config.supabaseUrl && config.supabaseAnonKey && window.supabase ? window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey) : null;
 const locations = ['Andhra Pradesh', 'Karnataka', 'Mumbai', 'Navi Mumbai', 'Odisha', 'Pune', 'Telangana'];
 const galleryCatalog = window.GCGW_GALLERY_MEDIA || {};
+const suppliedGalleryCovers = {
+  'karnataka': { cover: 'gallery/karnataka/karnataka-photo-01.jpeg', photos: 1, videos: 11 },
+  'telangana': { cover: 'gallery/telangana/telangana-photo-01.jpeg', photos: 4, videos: 1 }
+};
+Object.entries(suppliedGalleryCovers).forEach(([key, details]) => {
+  const existing = galleryCatalog[key] || {};
+  galleryCatalog[key] = { ...details, ...existing, cover: existing.cover || details.cover, photos: Math.max(existing.photos || 0, details.photos), videos: Math.max(existing.videos || 0, details.videos) };
+});
 const slug = value => String(value || '').toLowerCase().replace(/\s+/g, '-');
 const fallback = { projects: locations.map((title, index) => ({ id: `location-${index}`, title, description: '', category: 'Project location', location: title, image_url: galleryCatalog[slug(title)]?.cover || '' })), team: [{ id: '1', name: 'Gopal Chavan', role: 'CEO' }, { id: '2', name: 'Kevil Jadhav', role: 'Co-Founder' }, { id: '3', name: 'Pramod Jadhav', role: 'Site Operations' }, { id: '4', name: 'Akash Jadhav', role: 'Site Operations' }, { id: '5', name: 'Arjun Chavan', role: 'Technical Support & Quotations' }, { id: '6', name: 'Vital Chavan', role: 'Engineer' }], media: [] };
 const localContentKey = 'gcgw-owner-content';
