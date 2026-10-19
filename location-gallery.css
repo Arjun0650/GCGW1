@@ -12,6 +12,7 @@
 
 html.gallery-open, body.gallery-open { overflow: hidden; overscroll-behavior: none; }
 .gallery-dialog { width: min(1040px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }
+.gallery-dialog > .close { position: fixed !important; top: 16px !important; right: 16px !important; z-index: 1001; display: grid; width: 42px; height: 42px; place-items: center; margin: 0; border-radius: 50%; background: #fff; color: #102333; box-shadow: 0 2px 12px rgb(0 0 0 / .28); }
 .gallery-dialog h2 { margin-bottom: 8px; }
 .gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 24px; }
 .gallery-thumb { position: relative; display: block; aspect-ratio: 1 / .72; padding: 0; border: 0; overflow: hidden; background: #102333; cursor: zoom-in; }
@@ -35,7 +36,7 @@ html.gallery-open, body.gallery-open { overflow: hidden; overscroll-behavior: no
   .location-card { min-height: 0; }
   .location-card > img, .location-cover, .location-image-placeholder { height: 220px; }
   .gallery-dialog { position: fixed; inset: 8px; width: auto; height: auto; max-height: none; margin: 0; padding: 48px 14px 18px; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
-  #gallery-dialog > .close { position: fixed !important; top: 16px !important; right: 16px !important; z-index: 1001; display: grid; width: 40px; height: 40px; place-items: center; margin: 0; border-radius: 50%; background: #fff; box-shadow: 0 2px 12px rgb(0 0 0 / .18); }
+  #gallery-dialog > .close { width: 40px; height: 40px; }
   .gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin-top: 18px; }
   .gallery-thumb { aspect-ratio: 1 / .76; }
   .gallery-play { width: 30px; height: 30px; font-size: .65rem; }
