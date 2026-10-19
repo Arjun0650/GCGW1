@@ -15,15 +15,20 @@ function bundledMedia(projects) { return projects.flatMap(project => { const key
 const mediaFor = projectId => data.media.filter(item => String(item.project_id) === String(projectId)).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
 async function api(path, options = {}) { const session = (await supabase?.auth.getSession())?.data?.session; const response = await fetch(`/.netlify/functions/${path}`, { ...options, headers: { 'Content-Type': 'application/json', ...(session ? { Authorization: `Bearer ${session.access_token}` } : {}) } }); if (!response.ok) throw new Error((await response.json().catch(() => ({}))).error || 'Request failed'); return response.json(); }
 async function directContent() {
-  if (!supabase) throw new Error('Gallery connection is not configured.');
-  const [projectsResult, teamResult, mediaResult] = await Promise.all([
-    supabase.from('projects').select('*').order('title', { ascending: true }),
-    supabase.from('team_members').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false }),
-    supabase.from('project_media').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false })
+  if (!config.supabaseUrl || !config.supabaseAnonKey) throw new Error('Gallery connection is not configured.');
+  const headers = { apikey: config.supabaseAnonKey, Authorization: `Bearer ${config.supabaseAnonKey}` };
+  const read = async query => {
+    try {
+      const response = await fetch(`${config.supabaseUrl}/rest/v1/${query}`, { headers });
+      return response.ok ? await response.json() : [];
+    } catch { return []; }
+  };
+  const [projects, team, media] = await Promise.all([
+    read('projects?select=*&order=title.asc'),
+    read('team_members?select=*&order=sort_order.asc,created_at.desc'),
+    read('project_media?select=*&order=sort_order.asc,created_at.desc')
   ]);
-  // A missing public rule for one section must not hide the other sections.
-  // Each result is read independently so locations still appear while gallery/team permissions are repaired.
-  return { projects: projectsResult.data || [], team: teamResult.data || [], media: mediaResult.data || [] };
+  return { projects, team, media };
 }
 function localOwnerContent() { try { const saved = JSON.parse(localStorage.getItem(localContentKey) || '{}'); return { projects: saved.projects || [], media: saved.media || [], team: saved.team || [] }; } catch { return { projects: [], media: [], team: [] }; } }
 function mergeItems(items, additions) { return [...items, ...additions.filter(item => !items.some(existing => String(existing.id) === String(item.id)))]; }
