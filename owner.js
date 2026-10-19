@@ -65,6 +65,8 @@ async function fileApi(path, options = {}) {
     if (options.method === 'DELETE' && id) { deleteLocalRecord(collection, id); return { ok: true }; }
     return saveLocalRecord(collection, id, values);
   }
+  if (localPreview && (options.method === 'POST' || options.method === 'PUT')) return saveLocalRecord(collection, id, result.data || values);
+  if (localPreview && options.method === 'DELETE' && id) deleteLocalRecord(collection, id);
   return result.data || { ok: true };
 }
 async function api(path, options = {}) {
