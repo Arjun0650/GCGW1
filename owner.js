@@ -1,3 +1,6 @@
+(() => {
+if (window.__GCGW_OWNER_LOADED__) return;
+window.__GCGW_OWNER_LOADED__ = true;
 const config = window.GCGW_CONFIG || {};
 const supabase = config.supabaseUrl && config.supabaseAnonKey && window.supabase ? window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey) : null;
 const $ = selector => document.querySelector(selector);
@@ -63,3 +66,4 @@ $('#owner-sign-out').onclick = async () => { await supabase?.auth.signOut(); $('
 window.addEventListener('error', event => message('#login-message', `Owner page error: ${event.message}`, true));
 message('#login-message', supabase ? 'Ready to sign in.' : 'The secure sign-in service could not load. Check your internet connection and reopen this page.', !supabase);
 if (supabase) supabase.auth.getSession().then(async ({ data: { session } }) => { if (session && await isOwner()) { $('#owner-login').hidden = true; $('#owner-dashboard').hidden = false; await loadContent(); } }).catch(error => message('#login-message', error.message || 'Unable to restore the owner session.', true));
+})();
