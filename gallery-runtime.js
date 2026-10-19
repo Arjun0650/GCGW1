@@ -19,13 +19,16 @@
   };
   const unlockPage = () => {
     if (!document.body.classList.contains('gallery-open')) return;
+    const originalScrollBehavior = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = 'auto';
     document.documentElement.classList.remove('gallery-open');
     document.body.classList.remove('gallery-open');
     document.body.style.position = '';
     document.body.style.top = '';
     document.body.style.width = '';
     window.scrollTo(0, lockedScrollY);
-    requestAnimationFrame(() => returnTarget?.scrollIntoView({ block: 'center', behavior: 'auto' }));
+    returnTarget?.scrollIntoView({ block: 'center', behavior: 'instant' });
+    requestAnimationFrame(() => requestAnimationFrame(() => { document.documentElement.style.scrollBehavior = originalScrollBehavior; }));
   };
   const closeViewer = () => {
     if (!viewer) return;
