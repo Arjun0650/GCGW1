@@ -21,8 +21,8 @@ async function directContent() {
     supabase.from('team_members').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false }),
     supabase.from('project_media').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false })
   ]);
-  const error = projectsResult.error || teamResult.error || mediaResult.error;
-  if (error) throw error;
+  // A missing public rule for one section must not hide the other sections.
+  // Each result is read independently so locations still appear while gallery/team permissions are repaired.
   return { projects: projectsResult.data || [], team: teamResult.data || [], media: mediaResult.data || [] };
 }
 function localOwnerContent() { try { const saved = JSON.parse(localStorage.getItem(localContentKey) || '{}'); return { projects: saved.projects || [], media: saved.media || [], team: saved.team || [] }; } catch { return { projects: [], media: [], team: [] }; } }
