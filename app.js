@@ -4,6 +4,7 @@ const locations = ['Andhra Pradesh', 'Karnataka', 'Mumbai', 'Navi Mumbai', 'Odis
 const galleryCatalog = window.GCGW_GALLERY_MEDIA || {};
 const slug = value => String(value || '').toLowerCase().replace(/\s+/g, '-');
 const fallback = { projects: locations.map((title, index) => ({ id: `location-${index}`, title, description: '', category: 'Project location', location: title, image_url: galleryCatalog[slug(title)]?.cover || '' })), team: [{ id: '1', name: 'Gopal Chavan', role: 'CEO' }, { id: '2', name: 'Kevil Jadhav', role: 'Co-Founder' }, { id: '3', name: 'Pramod Jadhav', role: 'Site Operations' }, { id: '4', name: 'Akash Jadhav', role: 'Site Operations' }, { id: '5', name: 'Arjun Chavan', role: 'Technical Support & Quotations' }, { id: '6', name: 'Vital Chavan', role: 'Engineer' }], media: [] };
+const localContentKey = 'gcgw-owner-content';
 let data = structuredClone(fallback), activeType = 'project';
 const $ = selector => document.querySelector(selector);
 const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
@@ -24,6 +25,8 @@ async function directContent() {
   if (error) throw error;
   return { projects: projectsResult.data || [], team: teamResult.data || [], media: mediaResult.data || [] };
 }
+function localOwnerContent() { try { const saved = JSON.parse(localStorage.getItem(localContentKey) || '{}'); return { projects: saved.projects || [], media: saved.media || [], team: saved.team || [] }; } catch { return { projects: [], media: [], team: [] }; } }
+function mergeItems(items, additions) { return [...items, ...additions.filter(item => !items.some(existing => String(existing.id) === String(item.id)))]; }
 function card(project) { const title = locationName(project), cover = project.image_url || galleryCatalog[slug(title)]?.cover || ''; const image = cover ? `<button class="location-cover" type="button" data-gallery="${esc(project.id)}" aria-label="Open ${esc(title)} gallery"><img src="${esc(cover)}" alt="${esc(title)} project location" loading="lazy"></button>` : '<div class="location-image-placeholder" aria-hidden="true"></div>'; return `<article class="project-card location-card">${image}<div class="project-body"><span class="project-meta">Project location</span><h3>${esc(title)}</h3><button class="view-gallery" type="button" data-gallery="${esc(project.id)}">View gallery <span aria-hidden="true">→</span></button></div></article>`; }
 function draw() { const projects = [...data.projects].sort((a, b) => locationName(a).localeCompare(locationName(b))); $('#projects-grid').innerHTML = projects.length ? projects.map(card).join('') : '<p class="loading">Project locations will be added soon.</p>'; $('#team-grid').innerHTML = data.team.length ? data.team.map(member => `<article class="team-card"><div><h3>${esc(member.name)}</h3></div></article>`).join('') : '<p class="loading">Team information will be added soon.</p>'; }
 async function load() {
@@ -35,6 +38,8 @@ async function load() {
     // Opening index.html directly has no Netlify server. Read the public gallery data from Supabase instead.
     try { content = await directContent(); } catch {}
   }
+  const saved = localOwnerContent();
+  content = { projects: mergeItems(content.projects || [], saved.projects), media: mergeItems(content.media || [], saved.media), team: mergeItems(content.team || [], saved.team) };
   const grouped = normaliseLocations([...fallback.projects, ...(content.projects || [])], content.media || []);
   data = { projects: grouped.projects, team: content.team?.length ? content.team : fallback.team, media: [...grouped.media, ...bundledMedia(grouped.projects)] };
   draw();

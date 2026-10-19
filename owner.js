@@ -9,9 +9,15 @@ let activeTab = 'projects';
 let content = { projects: [], media: [], team: [] };
 const localPreview = window.location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(window.location.hostname);
 const projectLocations = ['Andhra Pradesh', 'Karnataka', 'Mumbai', 'Navi Mumbai', 'Odisha', 'Pune', 'Telangana'];
+const localContentKey = 'gcgw-owner-content';
 
 function message(id, text = '', error = false) { const element = $(id); element.textContent = text; element.classList.toggle('error', error); }
 function localTable(collection) { return collection === 'projects' ? 'projects' : collection === 'media' ? 'project_media' : collection === 'team' ? 'team_members' : null; }
+function savedContent() { try { const saved = JSON.parse(localStorage.getItem(localContentKey) || '{}'); return { projects: saved.projects || [], media: saved.media || [], team: saved.team || [] }; } catch { return { projects: [], media: [], team: [] }; } }
+function saveContent(saved) { localStorage.setItem(localContentKey, JSON.stringify(saved)); }
+function mergeContent(remote, saved = savedContent()) { const merge = (items, additions) => [...items, ...additions.filter(item => !items.some(existing => String(existing.id) === String(item.id)))]; return { projects: merge(remote.projects || [], saved.projects), media: merge(remote.media || [], saved.media), team: merge(remote.team || [], saved.team) }; }
+function saveLocalRecord(collection, id, values) { const saved = savedContent(), key = collection === 'projects' ? 'projects' : collection === 'media' ? 'media' : 'team'; const record = { ...values, id: id || `local-${crypto.randomUUID()}`, created_at: new Date().toISOString() }; const index = saved[key].findIndex(item => String(item.id) === String(record.id)); if (index >= 0) saved[key][index] = { ...saved[key][index], ...record }; else saved[key].unshift(record); saveContent(saved); return record; }
+function deleteLocalRecord(collection, id) { const saved = savedContent(), key = collection === 'projects' ? 'projects' : collection === 'media' ? 'media' : 'team'; saved[key] = saved[key].filter(item => String(item.id) !== String(id)); saveContent(saved); }
 async function fileApi(path, options = {}) {
   const [collection, id] = (path.startsWith('content/') ? path.slice('content/'.length) : path).split('/');
   if (path === 'admin-check') {
@@ -27,8 +33,12 @@ async function fileApi(path, options = {}) {
       supabase.from('team_members').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false }),
       supabase.from('project_media').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false })
     ]);
-    if (projectError || teamError || mediaError) throw projectError || teamError || mediaError;
-    return { projects: projects || [], team: team || [], media: media || [] };
+    const saved = savedContent();
+    if (projectError || teamError || mediaError) {
+      if (saved.projects.length || saved.team.length || saved.media.length) return saved;
+      throw projectError || teamError || mediaError;
+    }
+    return mergeContent({ projects: projects || [], team: team || [], media: media || [] }, saved);
   }
   const table = localTable(collection);
   if (!table) throw new Error('Request not found.');
@@ -50,7 +60,11 @@ async function fileApi(path, options = {}) {
   else if (options.method === 'PUT' && id) result = await supabase.from(table).update(values).eq('id', id).select().single();
   else if (options.method === 'DELETE' && id) result = await supabase.from(table).delete().eq('id', id);
   else throw new Error('This action is not available.');
-  if (result.error) throw result.error;
+  if (result.error) {
+    if (!localPreview) throw result.error;
+    if (options.method === 'DELETE' && id) { deleteLocalRecord(collection, id); return { ok: true }; }
+    return saveLocalRecord(collection, id, values);
+  }
   return result.data || { ok: true };
 }
 async function api(path, options = {}) {
