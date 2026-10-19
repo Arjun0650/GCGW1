@@ -1,6 +1,6 @@
 const config = window.GCGW_CONFIG || {};
 const supabase = config.supabaseUrl && config.supabaseAnonKey && window.supabase ? window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey) : null;
-const $ = selector => document.querySelector(selector);x
+const $ = selector => document.querySelector(selector);
 const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
 let activeTab = 'projects';
 let content = { projects: [], media: [], team: [] };
