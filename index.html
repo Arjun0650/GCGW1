@@ -48,6 +48,27 @@
   <button class="admin-fab" id="open-admin" hidden>Manage content</button>
   <script src="config.js"></script>
   <script src="gallery-media.js?v=20261019-telangana-karnataka"></script>
+  <script>
+    (() => {
+      const covers = {
+        Karnataka: 'gallery/karnataka/karnataka-photo-01.jpeg',
+        Telangana: 'gallery/telangana/telangana-photo-01.jpeg'
+      };
+      document.querySelectorAll('.location-card').forEach(card => {
+        const title = card.querySelector('h3')?.textContent.trim();
+        const source = covers[title];
+        const placeholder = card.querySelector('.location-image-placeholder');
+        if (!source || !placeholder) return;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'location-cover';
+        button.dataset.gallery = title === 'Karnataka' ? 'location-1' : 'location-6';
+        button.setAttribute('aria-label', `Open ${title} gallery`);
+        button.innerHTML = `<img src="${source}" alt="${title} project location">`;
+        placeholder.replaceWith(button);
+      });
+    })();
+  </script>
   <script src="gallery-runtime.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="app.js?v=20261019-location-covers"></script>
