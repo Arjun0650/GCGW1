@@ -21,15 +21,16 @@ export async function handler(event) {
     const path = event.path.replace('/.netlify/functions/content', '').replace(/^\//, '');
     if (event.httpMethod === 'GET' && !path) {
       const [{ data: projects, error: projectError }, { data: team, error: teamError }] = await Promise.all([
-        db.from('projects').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false }),
+        db.from('projects').select('*').order('title', { ascending: true }),
         db.from('team_members').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false })
       ]);
       if (projectError || teamError) throw projectError || teamError;
-      return json(200, { projects, team });
+      const { data: media } = await db.from('project_media').select('*').order('sort_order', { ascending: true }).order('created_at', { ascending: false });
+      return json(200, { projects, team, media: media || [] });
     }
     await requireAdmin(event, db);
     const [collection, id] = path.split('/');
-    const table = collection === 'projects' ? 'projects' : collection === 'team' ? 'team_members' : null;
+    const table = collection === 'projects' ? 'projects' : collection === 'media' ? 'project_media' : collection === 'team' ? 'team_members' : null;
     if (!table) return json(404, { error: 'Not found.' });
     if (event.httpMethod === 'POST') {
       const { data, error } = await db.from(table).insert(JSON.parse(event.body || '{}')).select().single();
