@@ -19,9 +19,8 @@ html, body { overflow-x: hidden; }
   nav .login-button { justify-content: center; margin: 14px 0 0; padding: 12px 16px; border: 1px solid var(--ink); text-align: center; }
 
   .hero { min-height: 0; display: flex; flex-direction: column; }
-  .hero-copy { order: 1; padding: 58px var(--mobile-gutter) 48px; }
-  .hero-visual { order: 2; min-height: 300px; height: min(76vw, 365px); }
-  .hero-visual img { object-position: 60% center; }
+  .hero-copy { order: 1; padding: 58px var(--mobile-gutter) 56px; }
+  .hero-visual { display: none; }
   .eyebrow { margin-bottom: 14px; font-size: .65rem; line-height: 1.4; letter-spacing: .12em; }
   .hero h1 { max-width: 11ch; margin-bottom: 20px; font-size: clamp(2.8rem, 13vw, 4.05rem); line-height: .99; letter-spacing: -.065em; }
   .hero-copy .lead { max-width: 33rem; margin-bottom: 0; font-size: 1rem; line-height: 1.58; }
@@ -29,10 +28,10 @@ html, body { overflow-x: hidden; }
   .actions .button { width: 100%; min-height: 50px; display: inline-flex; align-items: center; justify-content: center; text-align: center; }
   .actions .text { justify-content: flex-start; padding: 11px 0; }
 
-  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; padding: 0; background: #223541; }
-  .stats > div { min-height: 116px; padding: 20px var(--mobile-gutter); background: var(--dark); }
-  .stats strong { font-size: clamp(1.65rem, 8vw, 2.15rem); line-height: 1; margin-bottom: 7px; }
-  .stats span { display: block; max-width: 12ch; line-height: 1.35; }
+  .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; padding: 0; background: #223541; }
+  .stats > div { min-height: 108px; padding: 16px 8px; background: var(--dark); }
+  .stats strong { font-size: clamp(1.45rem, 7.1vw, 2.05rem); line-height: 1; margin-bottom: 7px; }
+  .stats span { display: block; max-width: none; font-size: clamp(.58rem, 2.65vw, .76rem); line-height: 1.28; overflow-wrap: anywhere; }
 
   .section, .leadership-preview { padding: 66px var(--mobile-gutter); }
   .section h2, .leadership-preview h2 { font-size: clamp(2.3rem, 11vw, 3.25rem); line-height: 1.02; }
@@ -108,5 +107,5 @@ html, body { overflow-x: hidden; }
   .brand-copy small { display: none; }
   .hero-copy { padding-top: 48px; }
   .hero h1 { font-size: clamp(2.6rem, 13vw, 3.25rem); }
-  .stats > div { padding: 18px 16px; }
+  .stats > div { padding: 15px 7px; }
 }
