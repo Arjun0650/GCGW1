@@ -41,8 +41,9 @@ async function directContent() {
 function localOwnerContent() { try { const saved = JSON.parse(localStorage.getItem(localContentKey) || '{}'); return { projects: saved.projects || [], media: saved.media || [], team: saved.team || [] }; } catch { return { projects: [], media: [], team: [] }; } }
 function mergeItems(items, additions) { return [...items, ...additions.filter(item => !items.some(existing => String(existing.id) === String(item.id)))]; }
 function card(project) { const title = locationName(project), cover = project.image_url || galleryCatalog[slug(title)]?.cover || ''; const image = cover ? `<button class="location-cover" type="button" data-gallery="${esc(project.id)}" aria-label="Open ${esc(title)} gallery"><img src="${esc(cover)}" alt="${esc(title)} project location" loading="lazy"></button>` : '<div class="location-image-placeholder" aria-hidden="true"></div>'; return `<article class="project-card location-card">${image}<div class="project-body"><span class="project-meta">Project location</span><h3>${esc(title)}</h3><button class="view-gallery" type="button" data-gallery="${esc(project.id)}">View gallery <span aria-hidden="true">→</span></button></div></article>`; }
-const exploreProjectsCard = () => '<article class="project-card more-project-card"><div class="project-body"><button class="more-project-button" type="button" data-open-project-list onclick="gcgwOpenDialog(\'project-list-dialog\')">More project locations <span aria-hidden="true">→</span></button></div></article>';
-function draw() { const projects = [...data.projects].sort((a, b) => locationName(a).localeCompare(locationName(b))); $('#projects-grid').innerHTML = projects.length ? `${projects.map(card).join('')}${exploreProjectsCard()}` : exploreProjectsCard(); $('#team-grid').innerHTML = data.team.length ? data.team.map(member => `<article class="team-card"><div><h3>${esc(member.name)}</h3></div></article>`).join('') : '<p class="loading">Team information will be added soon.</p>'; }
+const exploreProjectsCard = () => '<article class="project-card more-project-card"><div class="project-body"><button class="more-project-button" type="button" data-open-project-list onclick="event.preventDefault();event.stopPropagation();gcgwOpenDialog(\'project-list-dialog\')">More project locations <span aria-hidden="true">→</span></button></div></article>';
+const workersCard = '<article class="team-card team-card-workers"><div><h3>150+ Workers</h3><p>Skilled site workforce</p></div></article>';
+function draw() { const projects = [...data.projects].sort((a, b) => locationName(a).localeCompare(locationName(b))); $('#projects-grid').innerHTML = projects.length ? `${projects.map(card).join('')}${exploreProjectsCard()}` : exploreProjectsCard(); const members = data.team.length ? data.team.map(member => `<article class="team-card"><div><h3>${esc(member.name)}</h3></div></article>`).join('') : '<p class="loading">Team information will be added soon.</p>'; $('#team-grid').innerHTML = `${members}${workersCard}`; }
 async function load() {
   draw();
   let content = {};
@@ -78,7 +79,7 @@ document.addEventListener('click', event => {
   if (loginTrigger) loginTrigger.onclick = () => openDialog(auth);
 document.querySelectorAll('[data-open-contact]').forEach(button => button.onclick = () => { $('nav').classList.remove('open'); $('.menu-button').setAttribute('aria-expanded', 'false'); openDialog(contact); });
   const projectList = $('#project-list-dialog');
-  $('.project-list-contact').onclick = () => closeDialog(projectList);
+  $('.project-list-contact').onclick = () => { closeDialog(projectList); gcgwOpenDialog('inquiry-dialog'); };
   const inquiryDetails = form => {
     const values = Object.fromEntries(new FormData(form));
     return `Hello GCGW, I would like to discuss a project.\n\nName: ${values.name}\nPhone: ${values.phone}\nEmail: ${values.email || 'Not provided'}\nProject location: ${values.location || 'Not provided'}\nRequirement: ${values.requirement}`;
