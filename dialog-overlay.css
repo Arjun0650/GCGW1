@@ -1,0 +1,16 @@
+/* Keep every pop-up in the viewport instead of letting it become part of page flow. */
+html:has(dialog[open]) { scroll-behavior: auto; }
+body:has(dialog[open]) { overflow: hidden; }
+
+dialog[open] {
+  position: fixed !important;
+  inset: 50% auto auto 50%;
+  margin: 0;
+  transform: translate(-50%, -50%);
+}
+
+@media (max-width: 760px) {
+  dialog[open] {
+    max-height: calc(100dvh - 24px);
+  }
+}
