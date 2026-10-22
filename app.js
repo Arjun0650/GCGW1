@@ -11,7 +11,19 @@ Object.entries(suppliedGalleryCovers).forEach(([key, details]) => {
   galleryCatalog[key] = { ...details, ...existing, cover: existing.cover || details.cover, photos: Math.max(existing.photos || 0, details.photos), videos: Math.max(existing.videos || 0, details.videos) };
 });
 const slug = value => String(value || '').toLowerCase().replace(/\s+/g, '-');
-const fallback = { projects: locations.map((title, index) => ({ id: `location-${index}`, title, description: '', category: 'Project location', location: title, image_url: galleryCatalog[slug(title)]?.cover || '' })), team: [{ id: '1', name: 'Gopal Chavan', role: 'CEO' }, { id: '2', name: 'Kevil Jadhav', role: 'Co-Founder' }, { id: '3', name: 'Pramod Jadhav', role: 'Site Operations' }, { id: '4', name: 'Akash Jadhav', role: 'Site Operations' }, { id: '5', name: 'Arjun Chavan', role: 'Technical Support & Quotations' }, { id: '6', name: 'Vital Chavan', role: 'Engineer' }], media: [] };
+const defaultTeam = [
+  { id: '1', name: 'Gopal Chavan', role: 'CEO' },
+  { id: '2', name: 'Kevil Jadhav', role: 'Co-Founder' },
+  { id: '3', name: 'Pramod Jadhav', role: 'Site Operations' },
+  { id: '4', name: 'Akash Jadhav', role: 'Site Operations' },
+  { id: '5', name: 'Arjun Chavan', role: 'Technical Support & Quotations' },
+  { id: '6', name: 'Vital Chavan', role: 'Engineer' },
+  { id: '7', name: 'Om Prakesh', role: 'Team member' },
+  { id: '8', name: 'Shivaji Rathod', role: 'Team member' },
+  { id: '9', name: 'Murthy (CA)', role: 'Chartered Accountant' },
+  { id: '10', name: 'M. Shanker (CA)', role: 'Chartered Accountant' }
+];
+const fallback = { projects: locations.map((title, index) => ({ id: `location-${index}`, title, description: '', category: 'Project location', location: title, image_url: galleryCatalog[slug(title)]?.cover || '' })), team: defaultTeam, media: [] };
 const localContentKey = 'gcgw-owner-content';
 let data = structuredClone(fallback), activeType = 'project';
 const $ = selector => document.querySelector(selector);
@@ -40,9 +52,10 @@ async function directContent() {
 }
 function localOwnerContent() { try { const saved = JSON.parse(localStorage.getItem(localContentKey) || '{}'); return { projects: saved.projects || [], media: saved.media || [], team: saved.team || [] }; } catch { return { projects: [], media: [], team: [] }; } }
 function mergeItems(items, additions) { return [...items, ...additions.filter(item => !items.some(existing => String(existing.id) === String(item.id)))]; }
+function mergeTeamMembers(...lists) { const names = new Set(); return lists.flat().filter(member => { const name = String(member?.name || '').trim().toLowerCase(); if (!name || names.has(name)) return false; names.add(name); return true; }); }
 function card(project) { const title = locationName(project), cover = project.image_url || galleryCatalog[slug(title)]?.cover || ''; const image = cover ? `<button class="location-cover" type="button" data-gallery="${esc(project.id)}" aria-label="Open ${esc(title)} gallery"><img src="${esc(cover)}" alt="${esc(title)} project location" loading="lazy"></button>` : '<div class="location-image-placeholder" aria-hidden="true"></div>'; return `<article class="project-card location-card">${image}<div class="project-body"><span class="project-meta">Project location</span><h3>${esc(title)}</h3><button class="view-gallery" type="button" data-gallery="${esc(project.id)}">View gallery <span aria-hidden="true">→</span></button></div></article>`; }
-const exploreProjectsCard = () => '<article class="project-card more-project-card"><div class="project-body"><button class="more-project-button" type="button" data-open-project-list onclick="event.preventDefault();event.stopPropagation();gcgwOpenDialog(\'project-list-dialog\')">More project locations <span aria-hidden="true">→</span></button></div></article>';
-const workersCard = '<article class="team-card team-card-workers"><div><h3>150+ Workers</h3><p>Skilled site workforce</p></div></article>';
+const exploreProjectsCard = () => '<article class="project-card more-project-card"><div class="project-more-visual" aria-hidden="true"><span>Across India</span></div><div class="project-body"><span class="project-meta">Our reach</span><h3>More project locations</h3><button class="view-gallery more-project-button" type="button" data-open-project-list onclick="event.preventDefault();event.stopPropagation();gcgwOpenDialog(\'project-list-dialog\')">View locations <span aria-hidden="true">→</span></button></div></article>';
+const workersCard = '<article class="team-card team-card-workers"><div><span class="team-note">Our workforce</span><h3>150+ Workers</h3><p>Skilled site workforce</p></div></article>';
 function draw() { const projects = [...data.projects].sort((a, b) => locationName(a).localeCompare(locationName(b))); $('#projects-grid').innerHTML = projects.length ? `${projects.map(card).join('')}${exploreProjectsCard()}` : exploreProjectsCard(); const members = data.team.length ? data.team.map(member => `<article class="team-card"><div><h3>${esc(member.name)}</h3></div></article>`).join('') : '<p class="loading">Team information will be added soon.</p>'; $('#team-grid').innerHTML = `${members}${workersCard}`; }
 async function load() {
   draw();
@@ -56,7 +69,7 @@ async function load() {
   const saved = localOwnerContent();
   content = { projects: mergeItems(content.projects || [], saved.projects), media: mergeItems(content.media || [], saved.media), team: mergeItems(content.team || [], saved.team) };
   const grouped = normaliseLocations([...fallback.projects, ...(content.projects || [])], content.media || []);
-  data = { projects: grouped.projects, team: content.team?.length ? content.team : fallback.team, media: [...grouped.media, ...bundledMedia(grouped.projects)] };
+  data = { projects: grouped.projects, team: mergeTeamMembers(fallback.team, content.team || []), media: [...grouped.media, ...bundledMedia(grouped.projects)] };
   draw();
 }
 function openDialog(dialog) { try { if (dialog.showModal) dialog.showModal(); else dialog.setAttribute('open', ''); } catch { dialog.setAttribute('open', ''); } }
