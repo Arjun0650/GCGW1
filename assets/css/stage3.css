@@ -1,0 +1,418 @@
+/* Stage 3 — mobile project carousel, sticky action bar and enquiry sheet.
+   Loaded after site.css so it can correct the older layout rules. */
+
+/* -------------------------------------------------------------------------
+   1. Project carousel (phones only; desktop keeps the mosaic grid)
+   ------------------------------------------------------------------------- */
+#projects-grid { position: relative; }
+.projects-carousel-bar { display: none; }
+.slide-caption { display: none; }
+
+@media (max-width: 640px) {
+  #projects-grid {
+    display: flex !important;
+    grid-template-columns: none !important;
+    gap: 12px;
+    margin-inline: calc(var(--gutter) * -1);
+    padding: 2px var(--gutter) 6px;
+    max-width: 100vw;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  #projects-grid::-webkit-scrollbar { display: none; }
+
+  #projects-grid > .project-card {
+    flex: 0 0 85vw;
+    max-width: 85vw;
+    grid-column: auto !important;
+    scroll-snap-align: center;
+  }
+  #projects-grid .location-cover {
+    position: relative;
+    height: auto !important;
+    aspect-ratio: 4 / 3;
+  }
+  #projects-grid .project-body { margin-top: 8px; }
+  #projects-grid .project-body h3 { font-size: 1.3rem; }
+  #projects-grid .more-project-card {
+    flex: 0 0 85vw;
+    max-width: 85vw;
+    align-self: center;
+    min-height: 220px;
+  }
+  #projects-grid .more-project-card .project-body { flex-direction: column; align-items: flex-start; gap: 10px; }
+
+  .slide-caption {
+    position: absolute;
+    inset: auto 0 0 0;
+    display: grid;
+    gap: 2px;
+    padding: 12px 14px;
+    background: rgb(38 40 43 / .88);
+    color: #fff;
+    text-align: left;
+    pointer-events: none;
+  }
+  .slide-state {
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    font-weight: 600;
+    letter-spacing: .03em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .slide-sub {
+    color: var(--stone);
+    font-size: .66rem;
+    font-weight: 600;
+    letter-spacing: .12em;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  .projects-carousel-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .carousel-count {
+    min-height: 44px;
+    padding: 0 6px;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--font-body);
+    font-size: .76rem;
+    font-weight: 600;
+    letter-spacing: .1em;
+  }
+  .carousel-count:hover { color: var(--accent-ink); }
+  .carousel-dots { display: flex; align-items: center; gap: 2px; }
+  .carousel-dot {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+  .carousel-dot span {
+    width: 7px;
+    height: 7px;
+    border-radius: 99px;
+    background: #a8a49a;
+    transition: width .2s ease, background .2s ease;
+  }
+  .carousel-dot:hover span { background: var(--accent-ink); }
+  .carousel-dot[aria-current="true"] span { width: 22px; background: var(--accent); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #projects-grid { scroll-behavior: auto; }
+  .carousel-dot span { transition: none; }
+}
+
+/* -------------------------------------------------------------------------
+   2. Sticky action bar — Call + Discuss (replaces the old WhatsApp bar)
+   ------------------------------------------------------------------------- */
+@media (max-width: 960px) {
+  .mobile-cta {
+    grid-template-columns: .9fr 1.3fr !important;
+    gap: 8px;
+    padding: 8px 10px calc(8px + env(safe-area-inset-bottom)) !important;
+    background: var(--white);
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -10px 26px rgb(7 20 30 / .14);
+  }
+  .mobile-cta > * {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 3px;
+    font-family: var(--font-body);
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    line-height: 1.15;
+    text-align: center;
+    text-transform: uppercase;
+  }
+  .mobile-cta .cta-call {
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--charcoal);
+  }
+  .mobile-cta .cta-discuss {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  body.has-mobile-cta { padding-bottom: calc(78px + env(safe-area-inset-bottom)); }
+}
+
+body:has(dialog[open]) .mobile-cta,
+body.inquiry-open .mobile-cta,
+body.keyboard-open .mobile-cta { display: none !important; }
+
+/* -------------------------------------------------------------------------
+   3. Enquiry form — one form used in the contact band and in the sheet
+   ------------------------------------------------------------------------- */
+.enquiry-form { display: grid; gap: 14px; }
+.enquiry-form .enquiry-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+/* Label text and its required mark share a row; the field spans both. */
+.enquiry-form label {
+  position: relative;
+  grid-template-columns: auto 1fr;
+  column-gap: 5px;
+}
+.enquiry-form label > input,
+.enquiry-form label > select,
+.enquiry-form label > textarea,
+.enquiry-form label > .field-error { grid-column: 1 / -1; }
+.enquiry-form .req { color: var(--accent); font-weight: 700; }
+/* Red marks are illegible on the charcoal band, so the band uses stone. */
+.contact-band .enquiry-form .req { color: var(--stone); }
+.enquiry-form .optional {
+  font-weight: 400;
+  letter-spacing: .02em;
+  text-transform: none;
+  opacity: .75;
+}
+.enquiry-form input,
+.enquiry-form select,
+.enquiry-form textarea {
+  min-height: 48px;
+  font-size: 1rem;
+}
+.enquiry-form select {
+  width: 100%;
+  margin-top: 0;
+  padding: 12px 13px;
+  border: 1px solid var(--line-dark);
+  border-radius: 3px;
+  background: var(--charcoal-2);
+  color: var(--paper);
+  font-family: var(--font-body);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.enquiry-form select:focus {
+  outline: 2px solid var(--stone);
+  outline-offset: 2px;
+}
+.enquiry-form textarea { resize: vertical; }
+.enquiry-form .field-error {
+  display: none;
+  margin: 4px 0 0;
+  color: var(--error-dark);
+  font-size: .76rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.35;
+  text-transform: none;
+}
+.enquiry-form .field-error.show { display: block; }
+.enquiry-form [aria-invalid="true"] { border-color: var(--error-dark) !important; }
+.enquiry-form .hp-field {
+  position: absolute !important;
+  left: -10000px !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.enquiry-form .form-status {
+  min-height: 1.3em;
+  margin: 0;
+  color: var(--stone);
+  font-size: .88rem;
+  letter-spacing: 0;
+  line-height: 1.45;
+  text-transform: none;
+}
+.enquiry-form .form-status.error { color: var(--error-dark); }
+.enquiry-form .form-status.success { color: #9ed6a6; }
+.enquiry-form .inquiry-actions { margin-top: 2px; }
+.enquiry-form .inquiry-actions .btn { min-height: 48px; }
+
+/* Contact band keeps its dark palette. */
+.enquiry .inquiry-message { min-height: 1.3em; }
+
+/* -------------------------------------------------------------------------
+   4. Enquiry sheet — bottom sheet on tablets, full screen below 400px
+   ------------------------------------------------------------------------- */
+#inquiry-dialog { width: min(620px, calc(100% - 32px)); }
+
+#inquiry-dialog .sheet-grip { display: none; }
+#inquiry-dialog .enquiry { color: var(--ink); }
+#inquiry-dialog .enquiry label { color: var(--muted); }
+#inquiry-dialog .enquiry input,
+#inquiry-dialog .enquiry select,
+#inquiry-dialog .enquiry textarea {
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  font-size: 1rem;
+}
+#inquiry-dialog .enquiry input::placeholder,
+#inquiry-dialog .enquiry textarea::placeholder { color: #6f7477; }
+#inquiry-dialog .enquiry input:focus,
+#inquiry-dialog .enquiry select:focus,
+#inquiry-dialog .enquiry textarea:focus {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+#inquiry-dialog .enquiry .field-error { color: var(--error); }
+#inquiry-dialog .enquiry .form-status { color: var(--muted); }
+#inquiry-dialog .enquiry .form-status.error { color: var(--error); }
+#inquiry-dialog .enquiry .form-status.success { color: #1c6b2f; }
+#inquiry-dialog .enquiry .btn-primary { color: #fff; }
+#inquiry-dialog .helper { margin-bottom: 4px; }
+
+@media (max-width: 760px) {
+  #inquiry-dialog[open] {
+    position: fixed !important;
+    inset: auto 0 0 0 !important;
+    transform: none;
+    width: 100% !important;
+    max-width: 640px;
+    max-height: 92dvh;
+    margin: 0 auto !important;
+    padding: 26px 22px calc(20px + env(safe-area-inset-bottom));
+    border-radius: 16px 16px 0 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    animation: gcgw-sheet-in .24s ease-out;
+  }
+  #inquiry-dialog .sheet-grip {
+    display: block;
+    width: 44px;
+    height: 4px;
+    margin: -10px auto 16px;
+    border-radius: 99px;
+    background: var(--stone);
+  }
+  #inquiry-dialog h2 { font-size: clamp(1.7rem, 6.2vw, 2.1rem); }
+  #inquiry-dialog .enquiry-row { grid-template-columns: 1fr; gap: 12px; }
+  #inquiry-dialog .enquiry { gap: 12px; }
+  #inquiry-dialog .enquiry .inquiry-actions { display: grid; grid-template-columns: 1fr; }
+  #inquiry-dialog .enquiry .inquiry-actions .btn { width: 100%; }
+  #inquiry-dialog .enquiry textarea { min-height: 88px; }
+}
+
+@media (max-width: 400px) {
+  #inquiry-dialog[open] {
+    inset: 0 !important;
+    max-width: none;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0 !important;
+    padding: 30px 18px calc(16px + env(safe-area-inset-bottom));
+    border-radius: 0;
+    border-top-width: 0;
+  }
+  #inquiry-dialog .sheet-grip { margin-top: -12px; }
+  #inquiry-dialog .close { top: 10px; right: 10px; }
+}
+
+@keyframes gcgw-sheet-in {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #inquiry-dialog[open] { animation: none; }
+}
+
+/* -------------------------------------------------------------------------
+   5. Enquiries tab in the on-site owner dashboard
+   ------------------------------------------------------------------------- */
+.enquiry-list { display: grid; gap: 12px; margin-top: 8px; }
+.enquiry-card {
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  background: var(--white);
+}
+.enquiry-card header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 16px;
+}
+.enquiry-card h3 { margin: 0; font-size: 1.2rem; }
+.enquiry-card time { color: var(--muted); font-size: .76rem; }
+.enquiry-meta {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: .82rem;
+  line-height: 1.5;
+}
+.enquiry-requirement {
+  margin: 10px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  color: #3f4447;
+  font-size: .92rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.enquiry-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.enquiry-actions a,
+.enquiry-actions button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: #fff;
+  color: var(--charcoal);
+  font-family: var(--font-body);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.enquiry-actions a:hover,
+.enquiry-actions button:hover { border-color: var(--accent); color: var(--accent-ink); }
+.enquiry-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 12px 0;
+  color: var(--muted);
+  font-size: .82rem;
+}
+.enquiry-toolbar button {
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: #fff;
+  color: var(--charcoal);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}

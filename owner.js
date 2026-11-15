@@ -7,6 +7,7 @@ const $ = selector => document.querySelector(selector);
 const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
 let activeTab = 'projects';
 let content = { projects: [], media: [], team: [] };
+let enquiries = [], enquiriesLoaded = false, enquiriesLoading = false;
 const localPreview = window.location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(window.location.hostname);
 const projectLocations = ['Andhra Pradesh', 'Karnataka', 'Mumbai', 'Navi Mumbai', 'Odisha', 'Pune', 'Telangana'];
 const localContentKey = 'gcgw-owner-content';
@@ -14,6 +15,7 @@ const localContentKey = 'gcgw-owner-content';
 function message(id, text = '', error = false) { const element = $(id); element.textContent = text; element.classList.toggle('error', error); }
 function localTable(collection) { return collection === 'projects' ? 'projects' : collection === 'media' ? 'project_media' : collection === 'team' ? 'team_members' : null; }
 function savedContent() { try { const saved = JSON.parse(localStorage.getItem(localContentKey) || '{}'); return { projects: saved.projects || [], media: saved.media || [], team: saved.team || [] }; } catch { return { projects: [], media: [], team: [] }; } }
+function savedEnquiries() { try { const list = JSON.parse(localStorage.getItem('gcgw-local-enquiries') || '[]'); return Array.isArray(list) ? list : []; } catch { return []; } }
 function saveContent(saved) { localStorage.setItem(localContentKey, JSON.stringify(saved)); }
 function mergeContent(remote, saved = savedContent()) { const merge = (items, additions) => [...items, ...additions.filter(item => !items.some(existing => String(existing.id) === String(item.id)))]; return { projects: merge(remote.projects || [], saved.projects), media: merge(remote.media || [], saved.media), team: merge(remote.team || [], saved.team) }; }
 function saveLocalRecord(collection, id, values) { const saved = savedContent(), key = collection === 'projects' ? 'projects' : collection === 'media' ? 'media' : 'team'; const record = { ...values, id: id || `local-${crypto.randomUUID()}`, created_at: new Date().toISOString() }; const index = saved[key].findIndex(item => String(item.id) === String(record.id)); if (index >= 0) saved[key][index] = { ...saved[key][index], ...record }; else saved[key].unshift(record); saveContent(saved); return record; }
@@ -27,6 +29,7 @@ async function fileApi(path, options = {}) {
     if (error) throw error;
     return { isAdmin: Boolean(profile?.is_admin) };
   }
+  if (path === 'content/enquiries' && (!options.method || options.method === 'GET')) return { enquiries: savedEnquiries() };
   if (path === 'content' && (!options.method || options.method === 'GET')) {
     const [{ data: projects, error: projectError }, { data: team, error: teamError }, { data: media, error: mediaError }] = await Promise.all([
       supabase.from('projects').select('*').order('title', { ascending: true }),
@@ -78,12 +81,43 @@ async function api(path, options = {}) {
 }
 async function isOwner() { const profile = await api('admin-check'); return Boolean(profile.isAdmin); }
 async function loadContent() { content = await api('content'); if (localPreview) saveContent(content); render(); }
-function labels() { return activeTab === 'projects' ? ['ADD A PROJECT', 'New project or location', 'Projects & locations', 'Add a location and its cover picture.'] : activeTab === 'gallery' ? ['ADD GALLERY MEDIA', 'Upload a photo or video', 'Gallery uploads', 'Choose the location for every photo or video.'] : ['ADD TEAM MEMBER', 'New team member', 'Team members', 'Add names, roles and member photos.']; }
+function labels() { return activeTab === 'projects' ? ['ADD A PROJECT', 'New project or location', 'Projects & locations', 'Add a location and its cover picture.'] : activeTab === 'gallery' ? ['ADD GALLERY MEDIA', 'Upload a photo or video', 'Gallery uploads', 'Choose the location for every photo or video.'] : activeTab === 'team' ? ['ADD TEAM MEMBER', 'New team member', 'Team members', 'Add names, roles and member photos.'] : ['', '', 'Project enquiries', 'Enquiries submitted from the website, newest first.']; }
 function fieldMarkup(item = {}) { const locationRecords = projectLocations.map((location, index) => content.projects.find(project => (project.location || project.title) === location) || ({ id: `location-${index}`, location })); const locations = locationRecords.map(project => `<option value="${escapeHtml(project.id)}" ${String(project.id) === String(item.project_id) ? 'selected' : ''}>${escapeHtml(project.location || project.title)}</option>`).join(''); if (activeTab === 'projects') return `<label>Location / project name<input name="title" value="${escapeHtml(item.title || item.location || '')}" required></label><label>Cover image URL (optional)<input name="image_url" value="${escapeHtml(item.image_url || '')}"></label><label class="full">Short description (optional)<textarea name="description">${escapeHtml(item.description || '')}</textarea></label><label class="full">Upload cover photo<input type="file" name="upload_file" accept="image/*"><span class="upload-note">Choose a photo instead of entering an image URL.</span></label>`; if (activeTab === 'gallery') return `<label>Location<select name="project_id" required><option value="">Select a location</option>${locations}</select></label><label>Media type<select name="media_type"><option value="image" ${item.media_type !== 'video' ? 'selected' : ''}>Photo</option><option value="video" ${item.media_type === 'video' ? 'selected' : ''}>Video</option></select></label><label class="full">Photo / video URL (optional)<input name="media_url" value="${escapeHtml(item.media_url || '')}"></label><label class="full">Upload photo or video<input type="file" name="upload_file" accept="image/*,video/*"><span class="upload-note">Choose the location first, then select the file.</span></label>`; return `<label>Member name<input name="name" value="${escapeHtml(item.name || '')}" required></label><label>Role<input name="role" value="${escapeHtml(item.role || '')}" required></label><label class="full">Photo URL (optional)<input name="photo_url" value="${escapeHtml(item.photo_url || '')}"></label><label class="full">Upload member photo<input type="file" name="upload_file" accept="image/*"><span class="upload-note">Choose a photo instead of entering a photo URL.</span></label>`; }
 function records() { return activeTab === 'projects' ? content.projects : activeTab === 'gallery' ? content.media : content.team; }
 function recordInfo(item) { if (activeTab === 'projects') return [item.location || item.title, item.description || 'Project location', item.image_url]; if (activeTab === 'gallery') { const project = content.projects.find(entry => String(entry.id) === String(item.project_id)); return [`${project?.location || project?.title || 'Unknown location'} — ${item.media_type || 'photo'}`, item.media_url, '']; } return [item.name, item.role, item.photo_url]; }
-function renderForm(item = {}) { const [kicker, title] = labels(); $('#editor-kicker').textContent = kicker; $('#editor-title').textContent = title; $('#owner-editor [name=id]').value = item.id || ''; $('#owner-fields').innerHTML = fieldMarkup(item); message('#editor-message'); }
-function renderList() { const [, , title, note] = labels(); $('#list-title').textContent = title; $('#list-note').textContent = note; $('#owner-list').innerHTML = records().map(item => { const [heading, detail, image] = recordInfo(item); return `<article class="record"><div class="record-main">${image ? `<img src="${escapeHtml(image)}" alt="">` : ''}<strong>${escapeHtml(heading)}</strong><p>${escapeHtml(detail || '')}</p></div><div class="record-actions"><button type="button" data-edit="${escapeHtml(item.id)}">Edit</button><button type="button" class="delete" data-delete="${escapeHtml(item.id)}">Delete</button></div></article>`; }).join('') || '<p>No items added yet.</p>'; document.querySelectorAll('[data-edit]').forEach(button => button.onclick = () => renderForm(records().find(item => String(item.id) === button.dataset.edit))); document.querySelectorAll('[data-delete]').forEach(button => button.onclick = async () => { if (!confirm('Delete this item?')) return; try { await api(`content/${activeTab === 'projects' ? 'projects' : activeTab === 'gallery' ? 'media' : 'team'}/${button.dataset.delete}`, { method: 'DELETE' }); await loadContent(); renderForm(); } catch (error) { message('#editor-message', error.message, true); } }); }
+function renderForm(item = {}) { if (activeTab === 'enquiries') { document.querySelector('.editor-card').hidden = true; return; } document.querySelector('.editor-card').hidden = false; const [kicker, title] = labels(); $('#editor-kicker').textContent = kicker; $('#editor-title').textContent = title; $('#owner-editor [name=id]').value = item.id || ''; $('#owner-fields').innerHTML = fieldMarkup(item); message('#editor-message'); }
+function renderList() { const [, , title, note] = labels(); $('#list-title').textContent = title; $('#list-note').textContent = note; if (activeTab === 'enquiries') { loadEnquiries(); return; } $('#owner-list').innerHTML = records().map(item => { const [heading, detail, image] = recordInfo(item); return `<article class="record"><div class="record-main">${image ? `<img src="${escapeHtml(image)}" alt="">` : ''}<strong>${escapeHtml(heading)}</strong><p>${escapeHtml(detail || '')}</p></div><div class="record-actions"><button type="button" data-edit="${escapeHtml(item.id)}">Edit</button><button type="button" class="delete" data-delete="${escapeHtml(item.id)}">Delete</button></div></article>`; }).join('') || '<p>No items added yet.</p>'; document.querySelectorAll('[data-edit]').forEach(button => button.onclick = () => renderForm(records().find(item => String(item.id) === button.dataset.edit))); document.querySelectorAll('[data-delete]').forEach(button => button.onclick = async () => { if (!confirm('Delete this item?')) return; try { await api(`content/${activeTab === 'projects' ? 'projects' : activeTab === 'gallery' ? 'media' : 'team'}/${button.dataset.delete}`, { method: 'DELETE' }); await loadContent(); renderForm(); } catch (error) { message('#editor-message', error.message, true); } }); }
+function enquiryDate(value) { const date = new Date(value); return Number.isNaN(date.getTime()) ? '' : date.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+function renderEnquiries(localOnly = false) {
+  const list = $('#owner-list');
+  if (!enquiries.length) { list.innerHTML = '<p>No enquiries yet. New website enquiries will appear here.</p>'; return; }
+  list.innerHTML = `<div class="enquiry-toolbar"><span>${enquiries.length} enquir${enquiries.length === 1 ? 'y' : 'ies'} — newest first${localOnly ? ' (saved in this browser)' : ''}</span><button type="button" data-refresh-enquiries>Refresh</button></div>${enquiries.map(item => {
+    const phone = String(item.phone || '');
+    const digits = phone.replace(/\D/g, '');
+    const waNumber = digits.length === 10 ? `91${digits}` : digits;
+    return `<article class="record enquiry-card"><div class="record-main"><strong>${escapeHtml(item.name)}</strong><p class="enquiry-time">${escapeHtml(enquiryDate(item.created_at))}</p><p>${escapeHtml([item.service, item.location].filter(Boolean).join(' · ') || 'Service not specified')}</p>${item.email ? `<p>${escapeHtml(item.email)}</p>` : ''}<p class="enquiry-requirement">${escapeHtml(item.requirement)}</p></div><div class="record-actions"><a href="tel:${escapeHtml(digits)}">Call</a><a href="https://wa.me/${escapeHtml(waNumber)}?text=${encodeURIComponent(`Hello ${item.name}, thank you for your enquiry to GCGW.`)}" target="_blank" rel="noopener">WhatsApp</a></div></article>`;
+  }).join('')}`;
+  list.querySelector('[data-refresh-enquiries]').onclick = () => { enquiriesLoaded = false; loadEnquiries(true); };
+}
+async function loadEnquiries(force = false) {
+  if (enquiriesLoading) return;
+  if (enquiriesLoaded && !force) { renderEnquiries(); return; }
+  enquiriesLoading = true;
+  $('#owner-list').innerHTML = '<p>Loading enquiries…</p>';
+  let localOnly = localPreview;
+  try {
+    const result = await api('content/enquiries');
+    enquiries = (result.enquiries || []).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    enquiriesLoaded = true;
+  } catch (error) {
+    enquiries = savedEnquiries();
+    localOnly = true;
+    enquiriesLoaded = true;
+  } finally {
+    enquiriesLoading = false;
+  }
+  renderEnquiries(localOnly);
+}
 function render() { renderForm(); renderList(); }
 async function upload(file) { const limit = file.type.startsWith('video/') ? 80 * 1024 * 1024 : 15 * 1024 * 1024; if (file.size > limit) throw new Error('File is too large. Images must be under 15 MB and videos under 80 MB.'); const name = file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, '-'); const path = `owner-uploads/${Date.now()}-${crypto.randomUUID()}-${name}`; const { error } = await supabase.storage.from('site-media').upload(path, file, { cacheControl: '31536000', contentType: file.type }); if (error) throw error; return supabase.storage.from('site-media').getPublicUrl(path).data.publicUrl; }
 async function openDashboard() { $('#owner-login').hidden = true; $('#owner-dashboard').hidden = false; try { await loadContent(); } catch (_) { render(); } }
