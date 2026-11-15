@@ -47,14 +47,17 @@
     viewer.querySelector('.gallery-viewer-close')?.focus();
   };
   const renderThumb = (item, index) => `<button type="button" class="gallery-thumb" data-gallery-media-index="${index}" aria-label="Open ${item.alt}">
-    ${item.type === 'video' ? `<video preload="metadata" muted playsinline src="${item.src}" aria-hidden="true"></video><span class="gallery-play" aria-hidden="true">▶</span>` : `<img src="${item.src}" alt="${item.alt}" loading="lazy">`}
+    ${item.type === 'video' ? `<video preload="none" muted playsinline src="${item.src}" aria-hidden="true"></video><span class="gallery-play" aria-hidden="true">▶</span>` : `<img src="${item.thumb || item.src}" alt="${item.alt}" loading="lazy" decoding="async">`}
   </button>`;
   const open = (locationName, sourceCard = null) => {
     const key = slug(locationName), details = window.GCGW_GALLERY_MEDIA?.[key] || {};
     if (!dialog) return;
     returnTarget = sourceCard;
     galleryMedia = [
-      ...Array.from({ length: details.photos || 0 }, (_, index) => ({ type: 'image', src: `gallery/${key}/${key}-photo-${String(index + 1).padStart(2, '0')}.jpeg`, alt: `${locationName} project photo ${index + 1}` })),
+      ...Array.from({ length: details.photos || 0 }, (_, index) => {
+        const file = `${key}-photo-${String(index + 1).padStart(2, '0')}`;
+        return { type: 'image', src: `gallery/${key}/${file}.webp`, thumb: `gallery/${key}/${file}-thumb.webp`, alt: `${locationName} project photo ${index + 1}` };
+      }),
       ...Array.from({ length: details.videos || 0 }, (_, index) => ({ type: 'video', src: `gallery/${key}/${key}-video-${String(index + 1).padStart(2, '0')}.mp4`, alt: `${locationName} project video ${index + 1}` }))
     ];
     document.getElementById('gallery-title').textContent = locationName;

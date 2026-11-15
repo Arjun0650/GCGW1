@@ -30,6 +30,11 @@ export async function handler(event) {
     }
     await requireAdmin(event, db);
     const [collection, id] = path.split('/');
+    if (event.httpMethod === 'GET' && collection === 'enquiries' && !id) {
+      const { data, error } = await db.from('enquiries').select('*').order('created_at', { ascending: false }).limit(200);
+      if (error) throw error;
+      return json(200, { enquiries: data || [] });
+    }
     const table = collection === 'projects' ? 'projects' : collection === 'media' ? 'project_media' : collection === 'team' ? 'team_members' : null;
     if (!table) return json(404, { error: 'Not found.' });
     if (event.httpMethod === 'POST') {
