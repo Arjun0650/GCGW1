@@ -39,7 +39,7 @@ const canonicalLocation = value => {
   return knownLocationNames.find(name => name.toLowerCase() === city.toLowerCase()) || base;
 };
 function normaliseLocations(projects, media) { const byName = new Map(), idMap = new Map(); projects.forEach(project => { const name = canonicalLocation(locationName(project)); const existing = byName.get(name); if (existing) { idMap.set(String(project.id), existing.id); if (!existing.image_url && project.image_url) existing.image_url = project.image_url; } else { const clean = { ...project, title: name, location: name }; byName.set(name, clean); idMap.set(String(project.id), clean.id); } }); return { projects: [...byName.values()], media: media.map(item => ({ ...item, project_id: idMap.get(String(item.project_id)) || item.project_id })) }; }
-function bundledMedia(projects) { return projects.flatMap(project => { const key = slug(locationName(project)), details = galleryCatalog[key] || {}, folder = `gallery/${key}`; const photos = Array.from({ length: details.photos || 0 }, (_, index) => ({ id: `${key}-photo-${index + 1}`, project_id: project.id, media_url: `${folder}/${key}-photo-${String(index + 1).padStart(2, '0')}.webp`, media_type: 'image', sort_order: index })); const videos = Array.from({ length: details.videos || 0 }, (_, index) => ({ id: `${key}-video-${index + 1}`, project_id: project.id, media_url: `${folder}/${key}-video-${String(index + 1).padStart(2, '0')}.mp4`, media_type: 'video', sort_order: 100 + index })); return [...photos, ...videos]; }); }
+function bundledMedia(projects) { return projects.flatMap(project => { const key = slug(locationName(project)), details = galleryCatalog[key] || {}, folder = `gallery/${key}`; const photos = Array.from({ length: details.photos || 0 }, (_, index) => ({ id: `${key}-photo-${index + 1}`, project_id: project.id, media_url: `${folder}/${key}-photo-${String(index + 1).padStart(2, '0')}.webp`, media_type: 'image', sort_order: index })); const videos = Array.from({ length: details.videos || 0 }, (_, index) => { const base = `${folder}/${key}-video-${String(index + 1).padStart(2, '0')}`, meta = (details.videoInfo || [])[index] || []; return { id: `${key}-video-${index + 1}`, project_id: project.id, media_url: `${base}.mp4`, poster_url: `${base}-poster.jpg`, media_type: 'video', sort_order: 100 + index, duration_seconds: Number(meta[0]) || 0, width: Number(meta[1]) || 0, height: Number(meta[2]) || 0 }; }); return [...photos, ...videos]; }); }
 const mediaFor = projectId => data.media.filter(item => String(item.project_id) === String(projectId)).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
 async function api(path, options = {}) { const session = (await supabaseClient?.auth.getSession())?.data?.session; const response = await fetch(`/.netlify/functions/${path}`, { ...options, headers: { 'Content-Type': 'application/json', ...(session ? { Authorization: `Bearer ${session.access_token}` } : {}) } }); if (!response.ok) throw new Error((await response.json().catch(() => ({}))).error || 'Request failed'); return response.json(); }
 async function directContent() {
@@ -111,7 +111,14 @@ async function load() {
 }
 function openDialog(dialog) { try { if (dialog.showModal) dialog.showModal(); else dialog.setAttribute('open', ''); } catch { dialog.setAttribute('open', ''); } }
 function closeDialog(dialog) { if (dialog.close) dialog.close(); else dialog.removeAttribute('open'); }
-function openGallery(id) { const project = data.projects.find(item => String(item.id) === String(id)); if (!project) return; const title = locationName(project); const items = mediaFor(id); $('#gallery-title').textContent = title; $('#gallery-intro').textContent = items.length ? `${items.length} photo${items.length === 1 ? '' : 's'} and video${items.some(item => item.media_type === 'video') ? 's' : ''} from our work in ${title}.` : `Photos and videos from our work in ${title} will be added here soon.`; $('#gallery-grid').innerHTML = items.length ? items.map(item => item.media_type === 'video' ? `<video controls preload="metadata" src="${esc(item.media_url)}" aria-label="${esc(item.alt_text || `${title} project video`)}"></video>` : `<img src="${esc(item.media_url)}" alt="${esc(item.alt_text || `${title} project photo`)}" loading="lazy">`).join('') : (project.image_url ? `<img src="${esc(project.image_url)}" alt="${esc(title)} project location">` : ''); openDialog($('#gallery-dialog')); }
+window.GCGW_GALLERY_STATES = () => data.projects
+  .map(project => ({ key: slug(locationName(project)), label: locationName(project), items: mediaFor(project.id) }))
+  .filter(state => state.items.length);
+function openGallery(id) {
+  const project = data.projects.find(item => String(item.id) === String(id));
+  const title = project ? locationName(project) : String(id || '');
+  if (window.GCGWGallery && title) window.GCGWGallery.open(title);
+}
 window.openProjectGallery = openGallery;
 function setMessage(message, error = false) { const element = $('#auth-message'); element.textContent = message; element.style.color = error ? '#b42318' : ''; }
 
@@ -213,13 +220,17 @@ const inquiryDialog = $('#inquiry-dialog');
 const enquiryForms = [...document.querySelectorAll('[data-inquiry-form]')];
 const enquiryRateKey = 'gcgw-enquiry-last';
 const localEnquiriesKey = 'gcgw-local-enquiries';
+const ownerWhatsapp = String(config.whatsappNumber || '919398577232').replace(/\D/g, '');
 let inquiryReturnFocus = null;
 let enquirySending = false;
 const phonePattern = /^[6-9]\d{9}$/;
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const propertyTypes = ['Housing society', 'Commercial', 'Industrial', 'Other'];
 function localEnquiries() { try { const list = JSON.parse(localStorage.getItem(localEnquiriesKey) || '[]'); return Array.isArray(list) ? list : []; } catch { return []; } }
-function saveLocalEnquiry(payload) { try { const list = localEnquiries(); list.unshift({ ...payload, id: crypto.randomUUID?.() || String(Date.now()), created_at: new Date().toISOString() }); localStorage.setItem(localEnquiriesKey, JSON.stringify(list.slice(0, 100))); } catch {} }
-function normalisePhone(value) { const digits = String(value || '').replace(/\D/g, ''); const local = digits.length === 12 && digits.startsWith('91') ? digits.slice(2) : digits; return phonePattern.test(local) ? `+91 ${local.slice(0, 5)} ${local.slice(5)}` : ''; }
+function phoneDigits(value) { const digits = String(value || '').replace(/\D/g, ''); return digits.length === 12 && digits.startsWith('91') ? digits.slice(2) : digits; }
+function displayPhone(digits) { return `+91 ${digits.slice(0, 5)} ${digits.slice(5)}`; }
+function todayIso() { const now = new Date(); return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`; }
+function enquiryEndpoint() { return config.enquiryEndpoint || (config.supabaseUrl ? `${config.supabaseUrl}/functions/v1/enquiry-notify` : ''); }
 function setFieldError(form, name, text) {
   const box = form.querySelector(`[data-error="${name}"]`);
   const field = form.elements[name];
@@ -229,24 +240,33 @@ function setFieldError(form, name, text) {
 function validateEnquiry(form) {
   const values = Object.fromEntries(new FormData(form));
   const name = String(values.name || '').trim();
-  const phone = normalisePhone(values.phone);
+  const digits = phoneDigits(values.phone);
+  const phoneOk = phonePattern.test(digits);
   const email = String(values.email || '').trim();
-  const requirement = String(values.requirement || '').trim();
+  const message = String(values.message || '').trim();
+  const property = String(values.property_type || '').trim();
+  const date = String(values.preferred_date || '').trim();
   const emailInvalid = Boolean(email) && !emailPattern.test(email);
+  const dateInvalid = Boolean(date) && (!/^\d{4}-\d{2}-\d{2}$/.test(date) || date < todayIso());
   setFieldError(form, 'name', name.length < 2 ? 'Enter your name.' : '');
-  setFieldError(form, 'phone', phone ? '' : 'Enter a 10-digit Indian mobile number.');
+  setFieldError(form, 'phone', phoneOk ? '' : 'Enter a 10-digit Indian mobile number.');
   setFieldError(form, 'email', emailInvalid ? 'Check the email address or leave it blank.' : '');
   setFieldError(form, 'service', values.service ? '' : 'Choose the service you need.');
-  setFieldError(form, 'requirement', requirement.length < 10 ? 'Add at least 10 characters about the work.' : '');
-  if (name.length < 2 || !phone || emailInvalid || !values.service || requirement.length < 10) return null;
+  setFieldError(form, 'message', message.length < 10 ? 'Add at least 10 characters about the work.' : '');
+  setFieldError(form, 'property_type', property && !propertyTypes.includes(property) ? 'Choose a property type.' : '');
+  setFieldError(form, 'preferred_date', dateInvalid ? 'Choose today or a later date.' : '');
+  if (name.length < 2 || !phoneOk || emailInvalid || dateInvalid || !values.service || message.length < 10) return null;
   return {
     name: name.slice(0, 120),
-    phone,
+    phone: `+91${digits}`,
     email: email ? email.slice(0, 160) : null,
     location: String(values.location || '').trim().slice(0, 120) || null,
     service: String(values.service).slice(0, 120),
-    requirement: requirement.slice(0, 2000),
-    source: String(values.source || 'Website').slice(0, 80)
+    property_type: property || null,
+    preferred_date: date || null,
+    message: message.slice(0, 2000),
+    source_page: String(values.source || 'Website').slice(0, 60),
+    user_agent: navigator.userAgent
   };
 }
 function enquiryStatus(form, text, tone = '') {
@@ -256,48 +276,82 @@ function enquiryStatus(form, text, tone = '') {
   status.classList.toggle('error', tone === 'error');
   status.classList.toggle('success', tone === 'success');
 }
+function whatsappText(payload, ref, createdAt) {
+  const received = new Date(createdAt || Date.now()).toLocaleString('en-IN', {
+    timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+  });
+  return [
+    '*New Site Inspection Request*',
+    `Ref: ${ref || 'pending'}`,
+    `*Name:* ${payload.name}`,
+    `*Phone:* ${displayPhone(phoneDigits(payload.phone))}`,
+    `*Location:* ${payload.location || 'not given'}`,
+    `*Service:* ${payload.service}`,
+    `*Property:* ${payload.property_type || 'not given'}`,
+    `*Preferred date:* ${payload.preferred_date || 'Any'}`,
+    `*Requirement:* ${payload.message}`,
+    `Received: ${received} IST`,
+    `Reply: https://wa.me/91${phoneDigits(payload.phone)}`
+  ].join('\n');
+}
 async function sendEnquiry(form) {
   if (enquirySending) return;
-  if (String(form.elements.company?.value || '').trim()) return;
-  if (Date.now() - Number(form.dataset.dwell || 0) < 1500) return;
+  const fallback = form.querySelector('[data-whatsapp-fallback]');
+  if (fallback) { fallback.hidden = true; fallback.removeAttribute('href'); }
   const payload = validateEnquiry(form);
   if (!payload) {
     form.querySelector('[aria-invalid="true"]')?.focus();
     enquiryStatus(form, 'Please check the highlighted fields.', 'error');
     return;
   }
+  // The honeypot value travels with the request; the function drops it silently.
+  payload.company = String(form.elements.gcgw_hp?.value || '').trim();
   const last = Number(localStorage.getItem(enquiryRateKey) || 0);
   if (last && Date.now() - last < 60000) { enquiryStatus(form, 'Please wait a minute before sending another enquiry.', 'error'); return; }
-  if (!config.supabaseUrl || !config.supabaseAnonKey) { enquiryStatus(form, 'The enquiry service is not configured. Please call +91 93985 77232.', 'error'); return; }
+  const endpoint = enquiryEndpoint();
+  if (!endpoint) { enquiryStatus(form, 'The enquiry service is not configured. Please call +91 93985 77232.', 'error'); return; }
   const button = form.querySelector('[type="submit"]');
   enquirySending = true;
   if (button) { button.dataset.label = button.textContent; button.disabled = true; button.textContent = 'Sending…'; }
   enquiryStatus(form, 'Sending your enquiry…');
   try {
-    const response = await fetch(`${config.supabaseUrl}/rest/v1/enquiries`, {
+    const response = await fetch(endpoint, {
       method: 'POST',
-      headers: { apikey: config.supabaseAnonKey, Authorization: `Bearer ${config.supabaseAnonKey}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
+    const details = await response.json().catch(() => ({}));
     if (!response.ok) {
-      const details = await response.json().catch(() => ({}));
-      throw new Error(details.message || 'Request failed.');
+      if (response.status === 400 && details.fields) {
+        Object.entries(details.fields).forEach(([field, text]) => setFieldError(form, field, text));
+        form.querySelector('[aria-invalid="true"]')?.focus();
+        enquiryStatus(form, details.error || 'Please check the highlighted fields.', 'error');
+      } else if (response.status === 429) {
+        enquiryStatus(form, details.error || 'Too many enquiries. Please call +91 93985 77232.', 'error');
+      } else {
+        enquiryStatus(form, details.error || 'We could not send the enquiry. Please call +91 93985 77232.', 'error');
+      }
+      return;
     }
-    saveLocalEnquiry(payload);
     localStorage.setItem(enquiryRateKey, String(Date.now()));
     form.reset();
-    form.dataset.dwell = String(Date.now());
-    enquiryStatus(form, 'Thank you. We will call you within one working day.', 'success');
-  } catch (error) {
-    const text = /too many enquiries/i.test(error.message || '') ? 'Please call +91 93985 77232 — we already have a recent enquiry from this number.' : 'We could not send the enquiry. Please check your connection or call +91 93985 77232.';
-    enquiryStatus(form, text, 'error');
+    form.elements.preferred_date?.setAttribute('min', todayIso());
+    enquiryStatus(form, details.ref
+      ? `Thank you. Your reference is ${details.ref}. We will call you within one working day.`
+      : 'Thank you. We will call you within one working day.', 'success');
+    if (fallback) {
+      fallback.href = `https://wa.me/${ownerWhatsapp}?text=${encodeURIComponent(whatsappText(payload, details.ref, details.created_at))}`;
+      fallback.hidden = false;
+    }
+  } catch {
+    enquiryStatus(form, 'We could not send the enquiry. Please check your connection or call +91 93985 77232.', 'error');
   } finally {
     enquirySending = false;
     if (button) { button.disabled = false; button.textContent = button.dataset.label || 'Send enquiry'; }
   }
 }
 enquiryForms.forEach((form, index) => {
-  form.dataset.dwell = String(Date.now());
+  form.elements.preferred_date?.setAttribute('min', todayIso());
   form.querySelectorAll('[data-error]').forEach(box => {
     const field = form.elements[box.dataset.error];
     if (!field) return;
@@ -305,7 +359,7 @@ enquiryForms.forEach((form, index) => {
     field.setAttribute('aria-describedby', box.id);
   });
   form.addEventListener('submit', event => { event.preventDefault(); sendEnquiry(form); });
-  form.addEventListener('input', event => { if (event.target.name && event.target.name !== 'company') setFieldError(form, event.target.name, ''); });
+  form.addEventListener('input', event => { if (event.target.name && event.target.name !== 'gcgw_hp') setFieldError(form, event.target.name, ''); });
   form.addEventListener('change', event => { if (event.target.name) setFieldError(form, event.target.name, ''); });
 });
 function openInquiry(trigger) {
@@ -390,8 +444,6 @@ $('.menu-button').onclick = () => { const nav = $('nav'); const isOpen = nav.cla
 document.querySelectorAll('nav a').forEach(link => link.onclick = () => { $('nav').classList.remove('open'); $('.menu-button').setAttribute('aria-expanded', 'false'); });
 document.querySelectorAll('.close').forEach(button => button.onclick = () => closeDialog(button.closest('dialog')));
 document.addEventListener('click', event => {
-  const galleryTrigger = event.target.closest('[data-gallery]');
-  if (galleryTrigger) { event.preventDefault(); openGallery(galleryTrigger.dataset.gallery); return; }
   if (event.target.closest('[data-open-project-list]')) { event.preventDefault(); openDialog($('#project-list-dialog')); return; }
   const inquiryTrigger = event.target.closest('[data-open-inquiry]');
   if (inquiryTrigger) { event.preventDefault(); openInquiry(inquiryTrigger); }

@@ -26,11 +26,11 @@
   <link rel="stylesheet" href="styles.css?v=20261115-palette">
   <link rel="stylesheet" href="contact-options.css?v=20261115-palette">
   <link rel="stylesheet" href="project-locations.css?v=20261115-palette">
-  <link rel="stylesheet" href="location-gallery.css?v=20261115-palette">
+  <link rel="stylesheet" href="location-gallery.css?v=20261116-gallery">
   <link rel="stylesheet" href="owner-dashboard.css?v=20261115-palette">
   <link rel="stylesheet" href="dialog-overlay.css?v=20261022-fixed-dialogs">
   <link rel="stylesheet" href="assets/css/site.css?v=20261115-palette">
-  <link rel="stylesheet" href="assets/css/stage3.css?v=20261115-palette">
+  <link rel="stylesheet" href="assets/css/stage3.css?v=20261116-enquiry2">
   <link rel="stylesheet" href="assets/css/hero-mobile.css?v=20261115-hero">
   <script type="application/ld+json">
   {
@@ -495,6 +495,22 @@
             <label>Email address <span class="optional">(optional)</span><input type="email" name="email" autocomplete="email" maxlength="160"><span class="field-error" data-error="email"></span></label>
             <label>Project location<input name="location" maxlength="120" placeholder="City or state"><span class="field-error" data-error="location"></span></label>
           </div>
+          <div class="enquiry-row">
+            <label>Property type <span class="optional">(optional)</span>
+              <select name="property_type">
+                <option value="">Select if known</option>
+                <option>Housing society</option>
+                <option>Commercial</option>
+                <option>Industrial</option>
+                <option>Other</option>
+              </select>
+              <span class="field-error" data-error="property_type"></span>
+            </label>
+            <label>Preferred inspection date <span class="optional">(optional)</span>
+              <input type="date" name="preferred_date">
+              <span class="field-error" data-error="preferred_date"></span>
+            </label>
+          </div>
           <label class="enquiry-full">Service required <span class="req" aria-hidden="true">*</span>
             <select name="service">
               <option value="">Select a service</option>
@@ -511,14 +527,15 @@
             <span class="field-error" data-error="service"></span>
           </label>
           <label class="enquiry-full">Requirement <span class="req" aria-hidden="true">*</span>
-            <textarea name="requirement" maxlength="2000" placeholder="Tell us briefly about the work you need."></textarea>
-            <span class="field-error" data-error="requirement"></span>
+            <textarea name="message" maxlength="2000" placeholder="Tell us briefly about the work you need."></textarea>
+            <span class="field-error" data-error="message"></span>
           </label>
           <div class="hp-field" aria-hidden="true">
-            <label>Leave this field empty<input name="company" tabindex="-1" autocomplete="off"></label>
+            <label>Leave this field empty<input name="gcgw_hp" tabindex="-1" autocomplete="off"></label>
           </div>
           <div class="inquiry-actions">
             <button class="btn btn-primary" type="submit">Send enquiry</button>
+            <a class="btn btn-light whatsapp-fallback" data-whatsapp-fallback target="_blank" rel="noopener" hidden>Also send on WhatsApp</a>
           </div>
           <p class="inquiry-message form-status" role="status" aria-live="polite"></p>
         </form>
@@ -599,6 +616,22 @@
         <label>Email address <span class="optional">(optional)</span><input type="email" name="email" autocomplete="email" maxlength="160"><span class="field-error" data-error="email"></span></label>
         <label>Project location<input name="location" maxlength="120" placeholder="City or state"><span class="field-error" data-error="location"></span></label>
       </div>
+      <div class="enquiry-row">
+        <label>Property type <span class="optional">(optional)</span>
+          <select name="property_type">
+            <option value="">Select if known</option>
+            <option>Housing society</option>
+            <option>Commercial</option>
+            <option>Industrial</option>
+            <option>Other</option>
+          </select>
+          <span class="field-error" data-error="property_type"></span>
+        </label>
+        <label>Preferred inspection date <span class="optional">(optional)</span>
+          <input type="date" name="preferred_date">
+          <span class="field-error" data-error="preferred_date"></span>
+        </label>
+      </div>
       <label class="enquiry-full">Service required <span class="req" aria-hidden="true">*</span>
         <select name="service">
           <option value="">Select a service</option>
@@ -615,27 +648,41 @@
         <span class="field-error" data-error="service"></span>
       </label>
       <label class="enquiry-full">Requirement <span class="req" aria-hidden="true">*</span>
-        <textarea name="requirement" maxlength="2000" placeholder="Tell us briefly about the work you need."></textarea>
-        <span class="field-error" data-error="requirement"></span>
+        <textarea name="message" maxlength="2000" placeholder="Tell us briefly about the work you need."></textarea>
+        <span class="field-error" data-error="message"></span>
       </label>
       <div class="hp-field" aria-hidden="true">
-        <label>Leave this field empty<input name="company" tabindex="-1" autocomplete="off"></label>
+        <label>Leave this field empty<input name="gcgw_hp" tabindex="-1" autocomplete="off"></label>
       </div>
       <div class="inquiry-actions">
         <button class="btn btn-primary" type="submit">Send enquiry</button>
+        <a class="btn btn-light whatsapp-fallback" data-whatsapp-fallback target="_blank" rel="noopener" hidden>Also send on WhatsApp</a>
       </div>
       <p class="inquiry-message form-status" role="status" aria-live="polite"></p>
     </form>
   </dialog>
   <dialog id="project-list-dialog" class="project-list-dialog"><button class="close" aria-label="Close project list">×</button><h2>Project locations</h2><p class="helper">Cities and neighbourhoods where GCGW has completed work.</p><div class="project-region-list"><article><h3>Andhra Pradesh</h3><p>Amaravati</p></article><article><h3>Karnataka</h3><p>Bagalkot · Bengaluru</p></article><article><h3>Maharashtra</h3><p>Baner, Pune 1 · Baner, Pune 2 · Kothrud, Pune · Mumbai · Navi Mumbai · Wakad, Pune</p></article><article><h3>Odisha</h3><p>Bhubaneswar 1 · Bhubaneswar 2 · Puri (Jagannath Puri)</p></article><article><h3>Telangana</h3><p>Gachibowli, Hyderabad · Jubilee Hills, Hyderabad</p></article></div><button class="button primary project-list-contact" type="button">Discuss your project</button></dialog>
-  <dialog id="gallery-dialog" class="gallery-dialog"><button class="close" aria-label="Close gallery">×</button><p class="eyebrow">PROJECT LOCATION</p><h2 id="gallery-title">Project gallery</h2><p id="gallery-intro" class="helper"></p><div id="gallery-grid" class="gallery-grid"></div></dialog>
-  <section id="gallery-viewer" class="gallery-viewer" aria-label="Large gallery viewer" hidden>
-    <button type="button" class="gallery-viewer-close" aria-label="Close photo viewer">×</button>
-    <button type="button" class="gallery-viewer-nav gallery-viewer-prev" aria-label="Previous photo">‹</button>
-    <div id="gallery-viewer-media" class="gallery-viewer-media"></div>
-    <button type="button" class="gallery-viewer-nav gallery-viewer-next" aria-label="Next photo">›</button>
-    <p id="gallery-viewer-count" class="gallery-viewer-count"></p>
-  </section>
+  <dialog id="gallery-dialog" class="gallery-sheet" aria-labelledby="gallery-title">
+    <div class="gallery-sheet-top">
+      <button class="gallery-sheet-close" type="button" aria-label="Close gallery">×</button>
+      <p class="eyebrow">PROJECT LOCATION</p>
+      <h2 id="gallery-title">Project gallery</h2>
+      <p id="gallery-intro" class="helper"></p>
+      <div class="gallery-chips" id="gallery-chips" role="tablist" aria-label="Choose a project location"></div>
+    </div>
+    <div id="gallery-grid" class="gallery-grid"></div>
+    <p id="gallery-empty" class="gallery-empty" hidden>Photos and videos from this location will be added here soon.</p>
+  </dialog>
+  <dialog id="gallery-lightbox" class="gallery-lightbox" aria-label="Gallery viewer">
+    <button type="button" class="gallery-lightbox-close" aria-label="Close viewer">×</button>
+    <button type="button" class="gallery-lightbox-nav gallery-lightbox-prev" aria-label="Previous item">‹</button>
+    <div id="gallery-lightbox-media" class="gallery-lightbox-media"></div>
+    <button type="button" class="gallery-lightbox-nav gallery-lightbox-next" aria-label="Next item">›</button>
+    <div class="gallery-lightbox-bar">
+      <p id="gallery-lightbox-caption" class="gallery-lightbox-caption"></p>
+      <p id="gallery-lightbox-count" class="gallery-lightbox-count" aria-live="polite"></p>
+    </div>
+  </dialog>
   <dialog id="admin-dialog" class="admin-dialog"><button class="close" aria-label="Close">×</button><div class="admin-top"><div><p class="eyebrow">OWNER DASHBOARD</p><h2>Manage site content</h2><p class="helper">Create locations, upload photos or videos, and manage your team.</p></div><button class="link-button" id="sign-out">Sign out</button></div><div class="admin-tabs"><button data-tab="project" class="active">Locations & projects</button><button data-tab="media">Gallery uploads</button><button data-tab="member">Team members</button><button data-tab="enquiry">Enquiries</button></div><p id="admin-message" class="dashboard-message" role="status"></p><form id="editor-form"><input type="hidden" name="id"><div id="form-fields"></div><div class="editor-actions"><button class="button primary" type="submit">Save</button><button class="button text" type="button" id="cancel-edit">Clear</button></div></form><div id="admin-list"></div></dialog>
   <button class="admin-fab" id="open-admin" hidden>Manage content</button>
 
@@ -669,9 +716,9 @@
   </script>
   <script src="config.js"></script>
   <script src="site-data.js?v=20261115-stage2b"></script>
-  <script src="gallery-media.js?v=20261115-webp"></script>
-  <script src="gallery-runtime.js?v=20261115-webp2"></script>
+  <script src="gallery-media.js?v=20261116-gallery"></script>
+  <script src="gallery-runtime.js?v=20261116-gallery"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script defer src="app.js?v=20261115-hero"></script>
+  <script defer src="app.js?v=20261116-gallery"></script>
 </body>
 </html>

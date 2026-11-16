@@ -1,0 +1,7 @@
+project_id = "cgxoyhusbewjatzujzqy"
+
+# The website posts to this function without a Supabase session, so the
+# platform must not require an Authorization header. The function does its own
+# validation and rate limiting.
+[functions.enquiry-notify]
+verify_jwt = false
