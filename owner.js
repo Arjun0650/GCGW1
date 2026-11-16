@@ -88,35 +88,76 @@ function recordInfo(item) { if (activeTab === 'projects') return [item.location 
 function renderForm(item = {}) { if (activeTab === 'enquiries') { document.querySelector('.editor-card').hidden = true; return; } document.querySelector('.editor-card').hidden = false; const [kicker, title] = labels(); $('#editor-kicker').textContent = kicker; $('#editor-title').textContent = title; $('#owner-editor [name=id]').value = item.id || ''; $('#owner-fields').innerHTML = fieldMarkup(item); message('#editor-message'); }
 function renderList() { const [, , title, note] = labels(); $('#list-title').textContent = title; $('#list-note').textContent = note; if (activeTab === 'enquiries') { loadEnquiries(); return; } $('#owner-list').innerHTML = records().map(item => { const [heading, detail, image] = recordInfo(item); return `<article class="record"><div class="record-main">${image ? `<img src="${escapeHtml(image)}" alt="">` : ''}<strong>${escapeHtml(heading)}</strong><p>${escapeHtml(detail || '')}</p></div><div class="record-actions"><button type="button" data-edit="${escapeHtml(item.id)}">Edit</button><button type="button" class="delete" data-delete="${escapeHtml(item.id)}">Delete</button></div></article>`; }).join('') || '<p>No items added yet.</p>'; document.querySelectorAll('[data-edit]').forEach(button => button.onclick = () => renderForm(records().find(item => String(item.id) === button.dataset.edit))); document.querySelectorAll('[data-delete]').forEach(button => button.onclick = async () => { if (!confirm('Delete this item?')) return; try { await api(`content/${activeTab === 'projects' ? 'projects' : activeTab === 'gallery' ? 'media' : 'team'}/${button.dataset.delete}`, { method: 'DELETE' }); await loadContent(); renderForm(); } catch (error) { message('#editor-message', error.message, true); } }); }
 function enquiryDate(value) { const date = new Date(value); return Number.isNaN(date.getTime()) ? '' : date.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+const STATUS_OPTIONS = [['new', 'New'], ['contacted', 'Contacted'], ['site_visited', 'Site visited'], ['quoted', 'Quoted'], ['closed', 'Closed']];
+function statusLabel(value) { const match = STATUS_OPTIONS.find(option => option[0] === value); return match ? match[1] : 'New'; }
+function statusSelect(item) {
+  const current = STATUS_OPTIONS.some(option => option[0] === item.status) ? item.status : 'new';
+  return `<label class="status-field"><span>Status</span><select class="status-select" data-status="${escapeHtml(item.id)}" data-current="${current}">${STATUS_OPTIONS.map(([value, label]) => `<option value="${value}" ${value === current ? 'selected' : ''}>${label}</option>`).join('')}</select></label>`;
+}
+function deliveryBadges(item) {
+  const badge = (label, value) => {
+    const state = String(value || 'pending');
+    const tone = state === 'sent' ? 'ok' : state === 'pending' ? 'pending' : 'fail';
+    const text = state === 'sent' ? 'sent' : state === 'pending' ? 'pending' : 'failed';
+    return `<span class="badge badge--${tone}" title="${escapeHtml(state)}">${label}: ${text}</span>`;
+  };
+  return `<div class="enquiry-badges">${badge('Email', item.email_status)}${badge('WhatsApp', item.whatsapp_status)}</div>`;
+}
 function renderEnquiries(localOnly = false) {
   const list = $('#owner-list');
   if (!enquiries.length) { list.innerHTML = '<p>No enquiries yet. New website enquiries will appear here.</p>'; return; }
-  list.innerHTML = `<div class="enquiry-toolbar"><span>${enquiries.length} enquir${enquiries.length === 1 ? 'y' : 'ies'} — newest first${localOnly ? ' (saved in this browser)' : ''}</span><button type="button" data-refresh-enquiries>Refresh</button></div>${enquiries.map(item => {
-    const phone = String(item.phone || '');
-    const digits = phone.replace(/\D/g, '');
+  list.innerHTML = `<div class="enquiry-toolbar"><span>${enquiries.length} enquir${enquiries.length === 1 ? 'y' : 'ies'} — newest first${localOnly ? ' (saved in this browser)' : ''}</span><button type="button" data-refresh-enquiries>Refresh</button><span class="enquiry-note" role="status"></span></div>${enquiries.map(item => {
+    const digits = String(item.phone || '').replace(/\D/g, '');
     const waNumber = digits.length === 10 ? `91${digits}` : digits;
-    return `<article class="record enquiry-card"><div class="record-main"><strong>${escapeHtml(item.name)}</strong><p class="enquiry-time">${escapeHtml(enquiryDate(item.created_at))}</p><p>${escapeHtml([item.service, item.location].filter(Boolean).join(' · ') || 'Service not specified')}</p>${item.email ? `<p>${escapeHtml(item.email)}</p>` : ''}<p class="enquiry-requirement">${escapeHtml(item.requirement)}</p></div><div class="record-actions"><a href="tel:${escapeHtml(digits)}">Call</a><a href="https://wa.me/${escapeHtml(waNumber)}?text=${encodeURIComponent(`Hello ${item.name}, thank you for your enquiry to GCGW.`)}" target="_blank" rel="noopener">WhatsApp</a></div></article>`;
+    const details = [item.service, item.location, item.property_type].filter(Boolean).join(' · ') || 'Details not given';
+    return `<article class="record enquiry-card"><div class="record-main"><strong>${escapeHtml(item.name)}${item.ref ? ` <span class="enquiry-ref">${escapeHtml(item.ref)}</span>` : ''}</strong><p class="enquiry-time">${escapeHtml(enquiryDate(item.created_at))}</p><p>${escapeHtml(details)}</p>${item.preferred_date ? `<p>Preferred inspection: ${escapeHtml(item.preferred_date)}</p>` : ''}${item.email ? `<p>${escapeHtml(item.email)}</p>` : ''}<p class="enquiry-requirement">${escapeHtml(item.message || item.requirement || '')}</p>${deliveryBadges(item)}</div><div class="record-actions">${statusSelect(item)}<a href="tel:${escapeHtml(digits)}">Call</a><a href="https://wa.me/${escapeHtml(waNumber)}?text=${encodeURIComponent(`Hello ${item.name}, thank you for your enquiry to GCGW.`)}" target="_blank" rel="noopener">WhatsApp</a></div></article>`;
   }).join('')}`;
+  const note = (text, error = false) => { const element = list.querySelector('.enquiry-note'); if (element) { element.textContent = text; element.classList.toggle('error', error); } };
   list.querySelector('[data-refresh-enquiries]').onclick = () => { enquiriesLoaded = false; loadEnquiries(true); };
+  list.querySelectorAll('[data-status]').forEach(select => select.onchange = async () => {
+    const id = select.dataset.status, previous = select.dataset.current, next = select.value;
+    select.disabled = true;
+    try {
+      if (!supabase) throw new Error('Sign in to update the status.');
+      const { error } = await supabase.from('enquiries').update({ status: next }).eq('id', id);
+      if (error) throw error;
+      select.dataset.current = next;
+      const item = enquiries.find(entry => String(entry.id) === String(id));
+      if (item) item.status = next;
+      note(`Status saved: ${statusLabel(next)}.`);
+    } catch (error) {
+      select.value = previous;
+      note(error.message || 'Could not save the status.', true);
+    } finally {
+      select.disabled = false;
+    }
+  });
 }
 async function loadEnquiries(force = false) {
   if (enquiriesLoading) return;
   if (enquiriesLoaded && !force) { renderEnquiries(); return; }
   enquiriesLoading = true;
   $('#owner-list').innerHTML = '<p>Loading enquiries…</p>';
-  let localOnly = localPreview;
+  if (localPreview) {
+    enquiries = savedEnquiries().sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    enquiriesLoaded = true;
+    enquiriesLoading = false;
+    renderEnquiries(true);
+    return;
+  }
   try {
-    const result = await api('content/enquiries');
-    enquiries = (result.enquiries || []).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    if (!supabase) throw new Error('The secure connection could not load. Check your internet connection and reopen this page.');
+    const { data, error } = await supabase.from('enquiries').select('*').order('created_at', { ascending: false }).limit(200);
+    if (error) throw error;
+    enquiries = data || [];
     enquiriesLoaded = true;
+    renderEnquiries(false);
   } catch (error) {
-    enquiries = savedEnquiries();
-    localOnly = true;
-    enquiriesLoaded = true;
+    enquiries = [];
+    $('#owner-list').innerHTML = `<p>Enquiries could not be loaded: ${escapeHtml(error.message || 'Please try again.')}</p>`;
   } finally {
     enquiriesLoading = false;
   }
-  renderEnquiries(localOnly);
 }
 function render() { renderForm(); renderList(); }
 async function upload(file) { const limit = file.type.startsWith('video/') ? 80 * 1024 * 1024 : 15 * 1024 * 1024; if (file.size > limit) throw new Error('File is too large. Images must be under 15 MB and videos under 80 MB.'); const name = file.name.toLowerCase().replace(/[^a-z0-9._-]+/g, '-'); const path = `owner-uploads/${Date.now()}-${crypto.randomUUID()}-${name}`; const { error } = await supabase.storage.from('site-media').upload(path, file, { cacheControl: '31536000', contentType: file.type }); if (error) throw error; return supabase.storage.from('site-media').getPublicUrl(path).data.publicUrl; }

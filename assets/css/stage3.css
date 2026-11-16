@@ -250,6 +250,33 @@ body.keyboard-open .mobile-cta { display: none !important; }
 .enquiry-form .form-status.success { color: #9ed6a6; }
 .enquiry-form .inquiry-actions { margin-top: 2px; }
 .enquiry-form .inquiry-actions .btn { min-height: 48px; }
+.enquiry-form input[type="date"] { color-scheme: dark; }
+.enquiry-form .whatsapp-fallback[hidden] { display: none; }
+#inquiry-dialog .enquiry-form input[type="date"] { color-scheme: light; }
+#inquiry-dialog .enquiry-form .whatsapp-fallback { border: 1px solid var(--line); background: #fff; color: var(--ink); }
+#inquiry-dialog .enquiry-form .whatsapp-fallback:hover { background: var(--charcoal); border-color: var(--charcoal); color: var(--white); }
+
+/* Phones: one field per row, and label text flows as a sentence so a long
+   label and its "(optional)" hint wrap together instead of splitting apart. */
+@media (max-width: 640px) {
+  .enquiry-form .enquiry-row { grid-template-columns: 1fr; gap: 12px; }
+  .enquiry-form label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 5px;
+    row-gap: 6px;
+    font-size: .75rem;
+  }
+  .enquiry-form label > input,
+  .enquiry-form label > select,
+  .enquiry-form label > textarea,
+  .enquiry-form label > .field-error {
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 0;
+  }
+}
 
 /* Contact band keeps its dark palette. */
 .enquiry .inquiry-message { min-height: 1.3em; }

@@ -1,5 +1,5 @@
 .project-locations { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-.location-card { display: flex; flex-direction: column; min-height: 300px; border-top: 3px solid var(--orange); }
+.location-card { display: flex; flex-direction: column; min-height: 300px; border-top: 3px solid var(--accent); }
 .location-card > img, .location-cover, .location-image-placeholder { width: 100%; height: 190px; object-fit: cover; background: #d9d6cf; }
 .location-cover { display: block; padding: 0; border: 0; overflow: hidden; cursor: pointer; }
 .location-cover img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .25s ease; }
@@ -7,40 +7,308 @@
 .location-card .project-body { display: flex; flex: 1; flex-direction: column; align-items: flex-start; }
 .location-card h3 { margin: 7px 0 14px; font-size: 1.45rem; }
 .view-gallery { margin-top: auto; padding: 0; border: 0; background: transparent; color: var(--ink); font: 700 .9rem "DM Sans", sans-serif; text-align: left; }
-.view-gallery span { margin-left: 6px; color: var(--orange); font-size: 1.2em; }
-.view-gallery:hover { color: var(--orange); }
+.view-gallery span { margin-left: 6px; color: var(--accent); font-size: 1.2em; }
+.view-gallery:hover { color: var(--accent); }
+
+/* ==========================================================================
+   Project gallery — state sheet, sticky chips, tile grid, media lightbox
+   ========================================================================== */
 
 html.gallery-open, body.gallery-open { overflow: hidden; overscroll-behavior: none; }
-.gallery-dialog { width: min(1040px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }
-.gallery-dialog > .close { position: fixed !important; top: 16px !important; right: 16px !important; z-index: 1001; display: grid; width: 42px; height: 42px; place-items: center; margin: 0; border-radius: 50%; background: #fff; color: #26282b; box-shadow: 0 2px 12px rgb(0 0 0 / .28); }
-.gallery-dialog h2 { margin-bottom: 8px; }
-.gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 24px; }
-.gallery-thumb { position: relative; display: block; aspect-ratio: 1 / .72; padding: 0; border: 0; overflow: hidden; background: #26282b; cursor: zoom-in; }
-.gallery-thumb img, .gallery-thumb video { display: block; width: 100%; height: 100%; object-fit: cover; background: #26282b; }
-.gallery-play { position: absolute; inset: 50% auto auto 50%; display: grid; width: 34px; height: 34px; place-items: center; border-radius: 50%; transform: translate(-50%, -50%); background: rgb(0 0 0 / .68); color: #fff; font-size: .75rem; }
-.gallery-viewer { position: fixed; z-index: 1005; inset: 0; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-rows: minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 22px; background: rgb(31 33 35 / .96); }
-.gallery-viewer[hidden] { display: none; }
-.gallery-viewer-media { display: grid; width: 100%; height: 100%; place-items: center; overflow: hidden; }
-.gallery-viewer-media img, .gallery-viewer-media video { display: block; max-width: 100%; max-height: 100%; object-fit: contain; }
-.gallery-viewer-close, .gallery-viewer-nav { border: 0; background: rgb(255 255 255 / .9); color: #26282b; cursor: pointer; }
-.gallery-viewer-close { position: absolute; top: 16px; right: 16px; width: 42px; height: 42px; border-radius: 50%; font-size: 2rem; line-height: 1; }
-.gallery-viewer-nav { width: 44px; height: 56px; border-radius: 4px; font-size: 2.5rem; line-height: 1; }
-.gallery-viewer-count { grid-column: 1 / -1; margin: 0; color: #fff; text-align: center; font-weight: 700; }
+
+/* State sheet: full screen on phones, a large panel from 900px up. ---------- */
+.gallery-sheet {
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.gallery-sheet::backdrop { background: rgb(20 22 23 / .78); }
+.gallery-sheet-top {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  padding: calc(env(safe-area-inset-top) + 12px) clamp(16px, 4vw, 32px) 0;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+.gallery-sheet-top .eyebrow { margin: 0 56px 4px 0; color: var(--accent-ink); font-size: .7rem; font-weight: 700; letter-spacing: .16em; }
+.gallery-sheet h2 { margin: 0 56px 6px 0; font-size: clamp(1.6rem, 5vw, 2.2rem); line-height: 1.05; text-transform: uppercase; }
+.gallery-sheet .helper { margin: 0 0 4px; color: var(--muted); font-size: 1rem; }
+.gallery-sheet-close {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 10px);
+  right: 12px;
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--ink);
+  font: 400 1.7rem/1 var(--font-body);
+  cursor: pointer;
+}
+.gallery-sheet-close:hover { border-color: var(--ink); }
+.gallery-sheet-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.gallery-chips {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0 0 12px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.gallery-chips::-webkit-scrollbar { display: none; }
+.gallery-chip {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--ink);
+  font: 600 1rem/1 var(--font-body);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.gallery-chip:hover { border-color: var(--ink); }
+.gallery-chip[aria-selected="true"] { border-color: var(--ink); background: var(--ink); color: var(--white); }
+.gallery-chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 14px clamp(16px, 4vw, 32px) calc(28px + env(safe-area-inset-bottom));
+}
+.gallery-grid[hidden] { display: none; }
+.gallery-tile { display: block; width: 100%; padding: 0; border: 0; background: transparent; color: var(--ink); text-align: left; cursor: zoom-in; }
+.gallery-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.gallery-tile-media { position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; background: #1f2123; }
+.gallery-tile-media img, .gallery-tile-media video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 38%; }
+.gallery-tile-caption { display: block; margin-top: 7px; font-size: 1rem; line-height: 1.3; }
+.gallery-tile-badge {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 2px;
+  background: rgb(19 20 22 / .82);
+  color: var(--white);
+  font: 700 .8125rem/1 var(--font-body);
+  letter-spacing: .02em;
+}
+.gallery-tile-play { width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 8px solid currentColor; }
+.gallery-empty { margin: 0; padding: 8px clamp(16px, 4vw, 32px) calc(28px + env(safe-area-inset-bottom)); color: var(--muted); font-size: 1rem; }
+
+@media (min-width: 768px) {
+  .gallery-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+}
+@media (min-width: 1024px) {
+  .gallery-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* dialog-overlay.css centres and shrinks every dialog; these two surfaces are
+   full-bleed, so they opt out with a more specific selector. */
+dialog.gallery-sheet[open] {
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  margin: 0;
+  transform: none;
+  max-height: none;
+}
+dialog.gallery-lightbox[open] {
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+  margin: 0;
+  transform: none;
+  max-height: none;
+}
+@media (min-width: 900px) {
+  dialog.gallery-sheet[open] {
+    inset: 50% auto auto 50%;
+    width: min(1120px, calc(100% - 48px));
+    height: min(90dvh, 940px);
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Lightbox: its own modal dialog, so it paints above the state sheet. -------- */
+.gallery-lightbox {
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: #131416;
+  color: var(--white);
+  overflow: hidden;
+}
+.gallery-lightbox::backdrop { background: #131416; }
+.gallery-lightbox[open] { display: block; }
+.gallery-lightbox-media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+/* Absolutely positioned so the media box has a definite height; a percentage
+   max-height inside an auto-sized grid track does not constrain the video. */
+.gallery-stage-item {
+  position: absolute;
+  inset: calc(env(safe-area-inset-top) + 60px) max(10px, env(safe-area-inset-right)) calc(env(safe-area-inset-bottom) + 92px) max(10px, env(safe-area-inset-left));
+  display: grid;
+  place-items: center;
+  margin: 0;
+}
+.gallery-stage-image,
+.gallery-stage-video {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  margin: auto;
+  background: #000;
+}
+.gallery-lightbox-close {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 8px);
+  right: max(10px, env(safe-area-inset-right));
+  z-index: 4;
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / .3);
+  border-radius: 50%;
+  background: rgb(19 20 22 / .9);
+  color: var(--white);
+  font: 400 1.7rem/1 var(--font-body);
+  cursor: pointer;
+}
+.gallery-lightbox-close:hover { border-color: var(--white); }
+.gallery-lightbox-close:focus-visible,
+.gallery-lightbox-nav:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.gallery-lightbox-nav {
+  position: absolute;
+  top: 50%;
+  z-index: 4;
+  display: none;
+  width: 48px;
+  height: 64px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / .3);
+  border-radius: 4px;
+  background: rgb(19 20 22 / .75);
+  color: var(--white);
+  font: 400 2rem/1 var(--font-body);
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+.gallery-lightbox-prev { left: max(12px, env(safe-area-inset-left)); }
+.gallery-lightbox-next { right: max(12px, env(safe-area-inset-right)); }
+.gallery-lightbox-nav:hover { border-color: var(--white); }
+.gallery-lightbox-nav[disabled] { opacity: .4; cursor: default; }
+.gallery-lightbox-bar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px max(16px, env(safe-area-inset-right)) calc(env(safe-area-inset-bottom) + 14px) max(16px, env(safe-area-inset-left));
+  background: #131416;
+  border-top: 1px solid #33363a;
+}
+.gallery-lightbox-caption { margin: 0; font-size: 1rem; color: #e7e4dc; }
+.gallery-lightbox-count { margin: 0; font: 700 1rem/1 var(--font-body); color: var(--white); white-space: nowrap; }
+
+.gallery-spinner {
+  width: 34px;
+  height: 34px;
+  border: 3px solid rgb(255 255 255 / .25);
+  border-top-color: var(--white);
+  border-radius: 50%;
+  animation: gallery-spin .8s linear infinite;
+}
+@keyframes gallery-spin { to { transform: rotate(360deg); } }
+.gallery-spinner[hidden] { display: none; }
+.gallery-stage-error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: min(34ch, calc(100% - 32px));
+  gap: 14px;
+  justify-items: center;
+  padding: 24px;
+  border: 1px solid #33363a;
+  background: #1b1d20;
+  color: var(--white);
+  text-align: center;
+  transform: translate(-50%, -50%);
+}
+.gallery-stage-error p { margin: 0; font-size: 1rem; }
+.gallery-stage-error button {
+  min-height: 44px;
+  padding: 0 20px;
+  border: 1px solid var(--stone);
+  background: transparent;
+  color: var(--white);
+  font: 700 1rem/1 var(--font-body);
+  cursor: pointer;
+}
+.gallery-stage-error button:hover { background: var(--white); color: var(--ink); }
+
+@media (min-width: 768px) {
+  .gallery-lightbox-nav { display: grid; }
+  .gallery-stage-item { inset: calc(env(safe-area-inset-top) + 64px) 84px 96px; }
+}
+
+/* Landscape phones have little height to spare; shrink the reserved bands. */
+@media (max-height: 520px) {
+  .gallery-stage-item { inset: calc(env(safe-area-inset-top) + 56px) 76px calc(env(safe-area-inset-bottom) + 62px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-lightbox-close, .gallery-lightbox-nav, .gallery-tile { transition: none; }
+  .gallery-spinner { animation-duration: 2s; }
+}
+
 .admin-tabs { flex-wrap: wrap; }
 .admin-tabs button { white-space: nowrap; }
 .form-grid select { display: block; width: 100%; font: inherit; margin-top: 6px; padding: 11px; border: 1px solid var(--line); border-radius: 2px; background: #fff; }
-
-@media (max-width: 900px) { .project-locations { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 560px) {
-  .project-locations { grid-template-columns: 1fr; }
-  .location-card { min-height: 0; }
-  .location-card > img, .location-cover, .location-image-placeholder { height: 220px; }
-  .gallery-dialog { position: fixed; inset: 8px; width: auto; height: auto; max-height: none; margin: 0; padding: 48px 14px 18px; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
-  #gallery-dialog > .close { width: 40px; height: 40px; }
-  .gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin-top: 18px; }
-  .gallery-thumb { aspect-ratio: 1 / .76; }
-  .gallery-play { width: 30px; height: 30px; font-size: .65rem; }
-  .gallery-viewer { gap: 8px; padding: 12px 8px 18px; }
-  .gallery-viewer-nav { width: 34px; height: 48px; font-size: 2rem; }
-  .gallery-viewer-close { top: 10px; right: 10px; width: 38px; height: 38px; font-size: 1.75rem; }
-}
